@@ -9,9 +9,9 @@ class Obat extends Model
     protected $table = 'obat';
 
     protected $fillable = [
-        'kode_obat',
         'nama_obat',
-        'kategori_obat',
-        'aturan_pakai',
+        'satuan',
+        'stok',
+        'harga',
     ];
 }

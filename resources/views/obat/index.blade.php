@@ -2,30 +2,49 @@
 
 @section('content')
 <div class="container">
-    <h3>Data Obat</h3>
+    <h3 class="mb-4">Data Obat</h3>
 
-    <a href="{{ route('obat.create') }}" class="btn btn-primary mb-3">Tambah Obat</a>
+    <a href="{{ route('obat.create') }}" class="btn btn-primary mb-3">+ Tambah Obat</a>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Kode Obat</th>
+                <th>No</th>
                 <th>Nama Obat</th>
-                <th>Kategori</th>
-                <th>Aturan Pakai</th>
-                <th>Keterangan</th>
+                <th>Satuan</th>
+                <th>Stok</th>
+                <th>Harga</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($obat as $o)
-            <tr>
-                <td>{{ $o->kode_obat }}</td>
-                <td>{{ $o->nama_obat }}</td>
-                <td>{{ $o->kategori_obat }}</td>
-                <td>{{ $o->aturan_pakai }}</td>
-                <td>{{ $o->keterangan }}</td>
-            </tr>
-            @endforeach
+            @forelse($obat as $o)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $o->nama_obat }}</td>
+                    <td>{{ $o->satuan }}</td>
+                    <td>{{ $o->stok }}</td>
+                    <td>Rp {{ number_format($o->harga, 0, ',', '.') }}</td>
+                    <td>
+                        <a href="{{ route('obat.show', $o->id) }}" class="btn btn-info btn-sm">Detail</a>
+                        <a href="{{ route('obat.edit', $o->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                        <form action="{{ route('obat.destroy', $o->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button onclick="return confirm('Hapus obat ini?')" class="btn btn-danger btn-sm">
+                                Hapus
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center">Belum ada data obat</td></tr>
+            @endforelse
         </tbody>
     </table>
 </div>
