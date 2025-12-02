@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Obat;
@@ -8,21 +9,27 @@ class ObatController extends Controller
 {
     public function index()
     {
-        $data = Obat::all();
-        return view('obat.index', compact('data'));
+        $obat = Obat::all();
+        return view('obat.index', compact('obat'));
+    }
+
+    public function create()
+    {
+        return view('obat.create');
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'kode_obat' => 'required|unique:obat',
+            'nama_obat' => 'required',
+            'kategori_obat' => 'required',
+            'aturan_pakai' => 'required',
+        
+        ]);
+
         Obat::create($request->all());
-        return back()->with('success','Obat ditambahkan');
-    }
 
-    public function update(Request $request, $id)
-    {
-        $data = Obat::findOrFail($id);
-        $data->update($request->all());
-
-        return back()->with('success','Obat diupdate');
+        return redirect()->route('obat.index')->with('success', 'Data Obat Berhasil Ditambahkan');
     }
 }
