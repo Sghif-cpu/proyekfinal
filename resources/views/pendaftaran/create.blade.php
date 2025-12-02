@@ -3,10 +3,10 @@
 @section('title', 'Pendaftaran Pasien')
 
 @section('content')
-<div class="container py-4">
+<div class="container-fluid py-4">
 
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-12"> {{-- FULLSIZE --}}
 
             {{-- ALERT SUCCESS --}}
             @if (session('success'))
@@ -27,7 +27,7 @@
                 </div>
             @endif
 
-            <div class="card shadow">
+            <div class="card shadow w-100">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
                         <i class="fas fa-notes-medical me-1"></i> Form Pendaftaran Pasien
@@ -54,9 +54,7 @@
                             <select name="pasien_id" class="form-select" required>
                                 <option value="">-- Pilih Pasien --</option>
                                 @foreach ($pasien as $p)
-                                    <option value="{{ $p->id }}">
-                                        {{ $p->no_rm }} - {{ $p->nama }}
-                                    </option>
+                                    <option value="{{ $p->id }}">{{ $p->no_rm }} - {{ $p->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -67,9 +65,7 @@
                             <select name="poli_id" class="form-select" required>
                                 <option value="">-- Pilih Poli --</option>
                                 @foreach ($poli as $pl)
-                                    <option value="{{ $pl->id }}">
-                                        {{ $pl->nama_poli }}
-                                    </option>
+                                    <option value="{{ $pl->id }}">{{ $pl->nama_poli }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -80,9 +76,7 @@
                             <select name="dokter_id" class="form-select" required>
                                 <option value="">-- Pilih Dokter --</option>
                                 @foreach ($dokter as $d)
-                                    <option value="{{ $d->id }}">
-                                        {{ $d->nama }} ({{ $d->poli->nama_poli ?? '-' }})
-                                    </option>
+                                    <option value="{{ $d->id }}">{{ $d->nama }} ({{ $d->poli->nama_poli ?? '-' }})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -93,9 +87,7 @@
                             <select name="penjamin_id" class="form-select" required>
                                 <option value="">-- Pilih Penjamin --</option>
                                 @foreach ($penjamin as $j)
-                                    <option value="{{ $j->id }}">
-                                        {{ $j->nama_penjamin }}
-                                    </option>
+                                    <option value="{{ $j->id }}">{{ $j->nama_penjamin }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -103,43 +95,34 @@
                         {{-- TANGGAL --}}
                         <div class="mb-3">
                             <label class="form-label">Tanggal Daftar</label>
-                            <input type="date"
-                                   class="form-control"
-                                   value="{{ date('Y-m-d') }}"
-                                   readonly>
+                            <input type="date" class="form-control" value="{{ date('Y-m-d') }}" readonly>
                         </div>
 
                         {{-- KELUHAN --}}
                         <div class="mb-4">
                             <label class="form-label">Keluhan</label>
-                            <textarea name="keluhan" id="keluhan"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Masukkan keluhan pasien..."></textarea>
+                            <textarea name="keluhan" class="form-control" rows="3" placeholder="Masukkan keluhan pasien..."></textarea>
                         </div>
 
                         {{-- STATUS --}}
                         <input type="hidden" name="status" value="Terdaftar">
 
-                        {{-- TOMBOL SIMPAN & CETAK DIPISAH --}}
-                        <div class="d-grid gap-2">
+                        {{-- TOMBOL SIMPAN & CETAK --}}
+                        <div class="d-flex flex-wrap gap-2">
 
-                            {{-- TOMBOL SIMPAN --}}
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-success px-4">
                                 <i class="fas fa-save me-1"></i> Simpan
                             </button>
 
-                            {{-- TOMBOL CETAK ANTRIAN --}}
                             <a href="{{ route('pendaftaran.cetak', $no_antrian) }}"
-                               class="btn btn-primary"
-                               target="_blank">
+                               class="btn btn-primary px-4" target="_blank">
                                 <i class="fas fa-print me-1"></i> Cetak Antrian
                             </a>
 
-                            {{-- KEMBALI --}}
-                            <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary px-4">
                                 <i class="fas fa-arrow-left me-1"></i> Kembali
                             </a>
+
                         </div>
 
                     </form>
