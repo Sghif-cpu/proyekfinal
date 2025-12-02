@@ -112,7 +112,7 @@
                         {{-- KELUHAN --}}
                         <div class="mb-4">
                             <label class="form-label">Keluhan</label>
-                            <textarea name="keluhan"
+                            <textarea name="keluhan" id="keluhan"
                                       class="form-control"
                                       rows="3"
                                       placeholder="Masukkan keluhan pasien..."></textarea>
@@ -121,11 +121,22 @@
                         {{-- STATUS --}}
                         <input type="hidden" name="status" value="Terdaftar">
 
+                        {{-- TOMBOL SIMPAN & CETAK DIPISAH --}}
                         <div class="d-grid gap-2">
-                            <button class="btn btn-success">
-                                <i class="fas fa-save me-1"></i> Simpan & Cetak Antrian
+
+                            {{-- TOMBOL SIMPAN --}}
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Simpan
                             </button>
 
+                            {{-- TOMBOL CETAK ANTRIAN --}}
+                            <a href="{{ route('pendaftaran.cetak', $no_antrian) }}"
+                               class="btn btn-primary"
+                               target="_blank">
+                                <i class="fas fa-print me-1"></i> Cetak Antrian
+                            </a>
+
+                            {{-- KEMBALI --}}
                             <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-1"></i> Kembali
                             </a>
