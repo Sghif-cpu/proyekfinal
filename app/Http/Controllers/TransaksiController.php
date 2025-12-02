@@ -1,4 +1,5 @@
 <?php  
+
 namespace App\Http\Controllers;
 
 use App\Models\Transaksi;
@@ -10,10 +11,7 @@ class TransaksiController extends Controller
 {
     public function index()
     {
-        // Ambil semua transaksi + relasinya
-        $data = Transaksi::with('pendaftaran')->latest()->get();
-
-        // Ambil data pendaftaran untuk dropdown form kasir
+        $data = Transaksi::with(['pendaftaran.pasien'])->latest()->get();
         $pendaftaran = Pendaftaran::latest()->get();
 
         return view('transaksi.index', compact('data', 'pendaftaran'));
@@ -21,26 +19,49 @@ class TransaksiController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi minimal 1 item
+        $request->validate([
+            'pendaftaran_id' => 'required|exists:pendaftaran,id',
+            'keterangan.*' => 'nullable|string',
+            'harga.*' => 'nullable|numeric'
+        ]);
+
+        // Hitung total hanya untuk harga yang valid
+        $total = 0;
+        foreach ($request->harga as $index => $harga) {
+            if (!empty($harga) && !empty($request->keterangan[$index])) {
+                $total += $harga;
+            }
+        }
+
+        // Simpan transaksi utama
         $transaksi = Transaksi::create([
             'pendaftaran_id' => $request->pendaftaran_id,
-            'total' => array_sum($request->harga),
+            'total' => $total,
             'status' => 'belum_dibayar'
         ]);
 
-        foreach ($request->keterangan as $key => $value) {
-            TransaksiDetail::create([
-                'transaksi_id' => $transaksi->id,
-                'keterangan' => $value,
-                'harga' => $request->harga[$key]
-            ]);
+        // Simpan detail transaksi (skip jika kosong)
+        foreach ($request->keterangan as $key => $ket) {
+            if (!empty($ket) && !empty($request->harga[$key])) {
+                TransaksiDetail::create([
+                    'transaksi_id' => $transaksi->id,
+                    'keterangan' => $ket,
+                    'harga' => $request->harga[$key]
+                ]);
+            }
         }
 
-        return back()->with('success','Transaksi berhasil dibuat');
+        return redirect()
+            ->route('transaksi.index')
+            ->with('success', 'Transaksi berhasil dibuat!');
     }
 
     public function update($id)
     {
         $data = Transaksi::findOrFail($id);
         $data->update(['status' => 'sudah_dibayar']);
+
+        return back()->with('success', 'Pembayaran berhasil!');
     }
 }

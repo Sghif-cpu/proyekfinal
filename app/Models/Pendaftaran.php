@@ -26,22 +26,26 @@ class Pendaftaran extends Model
         'tanggal_daftar' => 'date'
     ];
 
-    // Set default otomatis jika belum diisi
+    /**
+     * Auto-set default values when creating a new record
+     */
     protected static function booted()
     {
         static::creating(function ($model) {
 
+            // Auto set tanggal daftar jika kosong
             if (!$model->tanggal_daftar) {
                 $model->tanggal_daftar = Carbon::today();
             }
 
+            // Auto set status default
             if (!$model->status) {
                 $model->status = 'Terdaftar';
             }
         });
     }
 
-    // ================= RELATIONS =================
+    // ===================== RELATIONS =====================
 
     public function pasien()
     {
