@@ -1,74 +1,95 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="container">
+    <h4 class="mb-4">Data Pemeriksaan Lab</h4>
 
-@if($rekam)
-    <h4 class="mb-3">Pemeriksaan Lab – {{ $rekam->pendaftaran->pasien->nama }}</h4>
-@else
-    <h4 class="mb-3">Pemeriksaan Lab</h4>
-@endif
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-<div class="card">
-    <div class="card-body">
-
-        @if($rekam)
-        <div class="d-flex justify-content-end mb-3">
-            <a href="{{ route('lab.create', $rekam->id) }}" class="btn btn-success">
-                + Tambah Pemeriksaan Lab
-            </a>
+    {{-- FILTER TANGGAL --}}
+    <form method="GET" class="row g-3 mb-3">
+        <div class="col-md-4">
+            <input type="date" name="tanggal_mulai" class="form-control"
+                   value="{{ request('tanggal_mulai') }}">
         </div>
-        @endif
+        <div class="col-md-4">
+            <input type="date" name="tanggal_selesai" class="form-control"
+                   value="{{ request('tanggal_selesai') }}">
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button class="btn btn-primary w-50">Filter</button>
+            <a href="{{ url()->current() }}" class="btn btn-secondary w-50">Reset</a>
+        </div>
+    </form>
 
-        <table class="table table-bordered text-center">
-            <thead class="table-light">
-                <tr>
-                    <th>No</th>
-                    @if(!$rekam)
-                    <th>Pasien</th>
-                    @endif
-                    <th>Nama Pemeriksaan</th>
-                    <th>Hasil</th>
-                    <th>Satuan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($data as $row)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    @if(!$rekam)
-                    <td>{{ $row->rekamMedis->pendaftaran->pasien->nama ?? '-' }}</td>
-                    @endif
-                    <td>{{ $row->nama_pemeriksaan }}</td>
-                    <td>{{ $row->hasil }}</td>
-                    <td>{{ $row->satuan }}</td>
-                    <td>
-                        <a href="{{ route('lab.show', $row->id) }}" class="btn btn-primary btn-sm">Lihat</a>
-                        <a href="{{ route('lab.edit', $row->id) }}" class="btn btn-warning btn-sm">Edit</a>
+    @if(isset($rekam_medis_id))
+        <a href="{{ route('lab.create', $rekam_medis_id) }}" class="btn btn-success mb-3">
+            + Tambah Lab
+        </a>
+    @endif
 
-                        <form action="{{ route('lab.destroy', $row->id) }}" 
-                              method="POST"
-                              style="display:inline">
-                            @csrf 
-                            @method('DELETE')
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
 
-                            <button class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Hapus data?')">
-                                Hapus
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="text-muted text-center">
-                        Belum ada data lab.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+            <table class="table table-bordered text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Pasien</th>
+                        <th>Dokter</th>
+                        <th>Pemeriksaan</th>
+                        <th>Tanggal</th>
+                        <th>Hasil</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
 
+                <tbody>
+                    @forelse($labs as $lab)
+                        <tr>
+                            <td>{{ $loop->iteration + ($labs->currentPage() - 1) * $labs->perPage() }}</td>
+
+                            <td>{{ $lab->rekamMedis->pendaftaran->pasien->nama ?? '-' }}</td>
+
+                            <td>{{ $lab->rekamMedis->pendaftaran->dokter->nama ?? '-' }}</td>
+
+                            <td>{{ $lab->nama_pemeriksaan }}</td>
+
+                            <td>{{ $lab->created_at->format('d-m-Y') }}</td>
+
+                            <td>{{ $lab->hasil ?? '-' }}</td>
+
+                            <td>
+                                <a href="{{ route('lab.edit', $lab->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                                <form action="{{ route('lab.destroy', $lab->id) }}"
+                                      method="POST" style="display:inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="return confirm('Hapus data?')"
+                                            class="btn btn-danger btn-sm">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-muted">Belum ada data lab</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            {{-- PAGINATION --}}
+            <div class="mt-3 d-flex justify-content-center">
+                {{ $labs->withQueryString()->links() }}
+            </div>
+
+        </div>
     </div>
 </div>
 @endsection

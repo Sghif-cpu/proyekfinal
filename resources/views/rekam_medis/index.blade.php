@@ -21,7 +21,7 @@
                     <th>No RM</th>
                     <th>Tanggal</th>
                     <th>Diagnosa</th>
-                    <th>Aksi</th>
+                    <th style="width:220px">Aksi</th>
                 </tr>
             </thead>
 
@@ -34,22 +34,36 @@
                     <td>{{ $row->pendaftaran->no_rm }}</td>
                     <td>{{ $row->created_at->format('d-m-Y') }}</td>
                     <td>{{ $row->diagnosa }}</td>
+                    
                     <td>
+                        {{-- ✅ TOMBOL LAB --}}
+                        <a href="{{ route('lab.index', $row->id) }}" 
+                           class="btn btn-primary btn-sm mb-1">
+                            Lab
+                        </a>
+
                         <a href="{{ route('rekam-medis.show', $row->id) }}" 
-                           class="btn btn-info btn-sm">Detail</a>
+                           class="btn btn-info btn-sm mb-1">
+                           Detail
+                        </a>
+
                         <a href="{{ route('rekam-medis.edit', $row->id) }}" 
-                           class="btn btn-warning btn-sm">Edit</a>
+                           class="btn btn-warning btn-sm mb-1">
+                           Edit
+                        </a>
+
                         <form action="{{ route('rekam-medis.destroy', $row->id) }}" 
                               method="POST" style="display:inline">
                             @csrf
                             @method('DELETE')
                             <button onclick="return confirm('Hapus data?')" 
-                                    class="btn btn-danger btn-sm">
+                                    class="btn btn-danger btn-sm mb-1">
                                     Hapus
                             </button>
                         </form>
                     </td>
                 </tr>
+
                 @empty
                 <tr>
                     <td colspan="7" class="text-muted text-center">
@@ -59,6 +73,7 @@
                 @endforelse
             </tbody>
         </table>
+
     </div>
 </div>
 @endsection
