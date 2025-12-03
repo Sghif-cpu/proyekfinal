@@ -66,6 +66,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('pendaftaran', PendaftaranController::class);
     Route::resource('rekam-medis', RekamMedisController::class);
     Route::resource('dokter', DokterController::class);
+
+    // ✅ ROUTE POLI (DITAMBAHKAN)
+    Route::resource('poli', PoliController::class);
+
+    // ⭐ ROUTE OBAT
     Route::resource('obat', ObatController::class);
     Route::resource('transaksi', TransaksiController::class);
     Route::resource('poli', PoliController::class);
@@ -79,44 +84,17 @@ Route::middleware('auth')->group(function () {
     Route::get('pendaftaran/cetak/{id}', [PendaftaranController::class, 'cetak'])
         ->name('pendaftaran.cetak');
 
-    Route::get('rekam-medis/{id}/print', [RekamMedisController::class, 'print'])
-        ->name('rekam-medis.print');
-
-
     /*
     |--------------------------------------------------------------------------
-    | AJAX - DOKTER BERDASARKAN POLI
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/get-dokter/{poli_id}', [DokterController::class, 'getByPoli'])
-        ->name('dokter.byPoli');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LAB - DAFTAR SEMUA (UNTUK MENU)
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/lab-semua', [LabPemeriksaanController::class, 'index'])
-        ->name('lab.semua');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | LAB PEMERIKSAAN - PER REKAM MEDIS
+    | LAB PEMERIKSAAN
     |--------------------------------------------------------------------------
     */
     Route::prefix('lab')->name('lab.')->group(function () {
 
-        // ✅ FORM TAMBAH LAB BERDASARKAN REKAM MEDIS
-        Route::get('/{rekam_medis_id}/create', [LabPemeriksaanController::class, 'create'])
-            ->whereNumber('rekam_medis_id')
-            ->name('create');
+        // Parameter OPTIONAL
+        Route::get('/{rekam_medis_id?}', [LabPemeriksaanController::class, 'index'])->name('index');
 
-        // ✅ LIST LAB (optional per rekam medis)
-        Route::get('/{rekam_medis_id?}', [LabPemeriksaanController::class, 'index'])
-            ->whereNumber('rekam_medis_id')
-            ->name('index');
+        Route::get('/{rekam_medis_id}/create', [LabPemeriksaanController::class, 'create'])->name('create');
 
         // ✅ SIMPAN
         Route::post('/store', [LabPemeriksaanController::class, 'store'])
