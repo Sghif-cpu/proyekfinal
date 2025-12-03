@@ -144,7 +144,7 @@
     </a>
 
     <a href="#">
-        <i class="fas fa-vials"></i> <span>Lab</span>
+        <i class="fas fa-vials"></i> Lab
     </a>
 
     <a href="{{ route('obat.index') }}">
