@@ -18,9 +18,7 @@
             transition: .3s;
         }
 
-        /* ================================
-           SIDEBAR SLIDE IN / SLIDE OUT
-        =================================*/
+        /* SIDEBAR */
         .sidebar {
             width: 250px;
             height: 100vh;
@@ -33,12 +31,10 @@
             transform: translateX(0);
         }
 
-        /* Collapse: slide-out tetapi icon tetap muncul */
         .sidebar.collapsed {
-            transform: translateX(-180px);   /* geser keluar */
+            transform: translateX(-180px);
         }
 
-        /* Geser kembali ICON supaya tetap terlihat */
         .sidebar.collapsed a i,
         .sidebar.collapsed .brand i,
         .sidebar.collapsed #btn-logout i {
@@ -46,7 +42,6 @@
             transition: .3s;
         }
 
-        /* Hide all text elements when collapsed */
         .sidebar.collapsed a span,
         .sidebar.collapsed .brand span,
         .sidebar.collapsed #btn-logout span,
@@ -64,7 +59,6 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            transition: .2s;
         }
 
         .sidebar a {
@@ -89,17 +83,16 @@
             text-align: center;
         }
 
-        /* CONTENT SHIFT */
         .content {
             margin-left: 250px;
             padding: 25px;
             transition: margin-left .3s ease;
         }
+
         .content.expanded {
             margin-left: 70px;
         }
 
-        /* TOGGLE BUTTON */
         #toggle-btn {
             width: 100%;
             text-align: right;
@@ -108,6 +101,7 @@
             cursor: pointer;
             color: #c2c7d0;
         }
+
         #toggle-btn:hover {
             color: white;
         }
@@ -143,8 +137,9 @@
         <i class="fas fa-stethoscope"></i> <span>Rekam Medis</span>
     </a>
 
-    <a href="#">
-        <i class="fas fa-vials"></i> Lab
+    <!-- ✅ LINK LAB SUDAH BENAR -->
+    <a href="{{ route('rekam-medis.index') }}">
+        <i class="fas fa-vials"></i> <span>Lab</span>
     </a>
 
     <a href="{{ route('obat.index') }}">
@@ -163,10 +158,6 @@
 
     <a href="{{ route('poli.index') }}">
         <i class="fas fa-hospital-symbol"></i> <span>Data Poli</span>
-    </a>
-
-    <a href="#">
-        <i class="fas fa-shield-alt"></i> <span>Penjamin</span>
     </a>
 
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
