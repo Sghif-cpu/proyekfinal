@@ -58,7 +58,7 @@
             <!-- Card -->
             <div class="glass-card p-4">
 
-                <h4 class="text-center mb-3 title-text">Login Sistem</h4>
+                <h4 class="text-center mb-3 title-text">Login RME</h4>
 
                 @if ($errors->any())
                     <div class="alert alert-danger py-2">
