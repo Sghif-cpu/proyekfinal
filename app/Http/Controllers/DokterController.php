@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Dokter;
@@ -15,20 +16,21 @@ class DokterController extends Controller
 
     public function create()
     {
-        $polis = Poli::all();
-        return view('dokter.create', compact('polis'));
+        $poli = Poli::all();
+        return view('dokter.create', compact('poli'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string',
-            'poli_id' => 'required|exists:polis,id',
-            'sip' => 'nullable|string',
-            'no_hp' => 'nullable|string',
+            'nama' => 'required',
+            'poli_id' => 'nullable',
+            'sip' => 'nullable',
+            'no_hp' => 'nullable',
         ]);
+
         Dokter::create($request->all());
-        return redirect()->route('dokter.index')->with('success','Dokter ditambahkan');
+        return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil ditambahkan!');
     }
 
     public function show($id)
@@ -40,26 +42,33 @@ class DokterController extends Controller
     public function edit($id)
     {
         $dokter = Dokter::findOrFail($id);
-        $polis = Poli::all();
-        return view('dokter.edit', compact('dokter','polis'));
+        $poli = Poli::all();
+        return view('dokter.edit', compact('dokter', 'poli'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama' => 'required|string',
-            'poli_id' => 'required|exists:polis,id',
-            'sip' => 'nullable|string',
-            'no_hp' => 'nullable|string',
+            'nama' => 'required',
+            'poli_id' => 'nullable',
+            'sip' => 'nullable',
+            'no_hp' => 'nullable',
         ]);
-        $dokter = Dokter::findOrFail($id);
-        $dokter->update($request->all());
-        return redirect()->route('dokter.index')->with('success','Data dokter diperbarui');
+
+        Dokter::findOrFail($id)->update($request->all());
+        return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
         Dokter::findOrFail($id)->delete();
-        return redirect()->route('dokter.index')->with('success','Dokter dihapus');
+        return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil dihapus!');
+    }
+
+    // 🔥 AJAX FILTER DOKTER BERDASARKAN POLI
+    public function getByPoli($poli_id)
+    {
+        $dokter = Dokter::where('poli_id', $poli_id)->get();
+        return response()->json($dokter);
     }
 }

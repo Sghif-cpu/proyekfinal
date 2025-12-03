@@ -113,8 +113,8 @@
         <i class="fas fa-user-md"></i> Dokter
     </a>
 
-    <a href="#">
-        <i class="fas fa-hospital"></i> Poli
+    <a href="{{ route('poli.index') }}">
+        <i class="fas fa-hospital"></i> Data Poli
     </a>
 
     <a href="#">

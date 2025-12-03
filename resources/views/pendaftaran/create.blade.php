@@ -6,9 +6,8 @@
 <div class="container-fluid py-4">
 
     <div class="row justify-content-center">
-        <div class="col-12"> {{-- FULLSIZE --}}
+        <div class="col-12">
 
-            {{-- ALERT SUCCESS --}}
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show">
                     {{ session('success') }}
@@ -16,7 +15,6 @@
                 </div>
             @endif
 
-            {{-- ERROR VALIDATION --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
@@ -42,10 +40,8 @@
                         {{-- NOMOR ANTRIAN --}}
                         <div class="mb-3">
                             <label class="form-label fw-bold">Nomor Antrian</label>
-                            <input type="text"
-                                   class="form-control text-center fw-bold fs-4 bg-light"
-                                   value="{{ $no_antrian }}"
-                                   readonly>
+                            <input type="text" class="form-control text-center fw-bold fs-4 bg-light"
+                                   value="{{ $no_antrian }}" readonly>
                         </div>
 
                         {{-- PASIEN --}}
@@ -62,7 +58,7 @@
                         {{-- POLI --}}
                         <div class="mb-3">
                             <label class="form-label">Poli</label>
-                            <select name="poli_id" class="form-select" required>
+                            <select name="poli_id" id="poliSelect" class="form-select" required>
                                 <option value="">-- Pilih Poli --</option>
                                 @foreach ($poli as $pl)
                                     <option value="{{ $pl->id }}">{{ $pl->nama_poli }}</option>
@@ -70,14 +66,11 @@
                             </select>
                         </div>
 
-                        {{-- DOKTER --}}
+                        {{-- DOKTER FILTER OTOMATIS --}}
                         <div class="mb-3">
                             <label class="form-label">Dokter</label>
-                            <select name="dokter_id" class="form-select" required>
+                            <select name="dokter_id" id="dokterSelect" class="form-select" required>
                                 <option value="">-- Pilih Dokter --</option>
-                                @foreach ($dokter as $d)
-                                    <option value="{{ $d->id }}">{{ $d->nama }} ({{ $d->poli->nama_poli ?? '-' }})</option>
-                                @endforeach
                             </select>
                         </div>
 
@@ -101,15 +94,13 @@
                         {{-- KELUHAN --}}
                         <div class="mb-4">
                             <label class="form-label">Keluhan</label>
-                            <textarea name="keluhan" class="form-control" rows="3" placeholder="Masukkan keluhan pasien..."></textarea>
+                            <textarea name="keluhan" class="form-control" rows="3"
+                                      placeholder="Masukkan keluhan pasien..."></textarea>
                         </div>
 
-                        {{-- STATUS --}}
                         <input type="hidden" name="status" value="Terdaftar">
 
-                        {{-- TOMBOL SIMPAN & CETAK --}}
                         <div class="d-flex flex-wrap gap-2">
-
                             <button type="submit" class="btn btn-success px-4">
                                 <i class="fas fa-save me-1"></i> Simpan
                             </button>
@@ -122,7 +113,6 @@
                             <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary px-4">
                                 <i class="fas fa-arrow-left me-1"></i> Kembali
                             </a>
-
                         </div>
 
                     </form>
@@ -130,7 +120,33 @@
                 </div>
 
             </div>
+
         </div>
     </div>
+
 </div>
+
+{{-- 🔥 FILTER DOKTER BERDASARKAN POLI --}}
+<script>
+document.getElementById('poliSelect').addEventListener('change', function () {
+    let poliId = this.value;
+    let dokterSelect = document.getElementById('dokterSelect');
+    dokterSelect.innerHTML = '<option value="">Memuat...</option>';
+
+    if (poliId === "") {
+        dokterSelect.innerHTML = '<option value="">-- Pilih Dokter --</option>';
+        return;
+    }
+
+    fetch('/get-dokter/' + poliId)
+        .then(response => response.json())
+        .then(data => {
+            dokterSelect.innerHTML = '<option value="">-- Pilih Dokter --</option>';
+            data.forEach(function (d) {
+                dokterSelect.innerHTML += `<option value="${d.id}">${d.nama}</option>`;
+            });
+        });
+});
+</script>
+
 @endsection

@@ -23,13 +23,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($data as $d)
+                    @forelse($data as $d)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $d->nama }}</td>
-                            <td>{{ $d->poli->nama }}</td>
+
+                            {{-- Aman dari error jika poli kosong --}}
+                            <td>{{ optional($d->poli)->nama_poli ?? '-' }}</td>
+
                             <td>{{ $d->sip ?? '-' }}</td>
                             <td>{{ $d->no_hp ?? '-' }}</td>
+
                             <td>
                                 <a href="{{ route('dokter.show',$d->id) }}" class="btn btn-info btn-sm">Detail</a>
                                 <a href="{{ route('dokter.edit',$d->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -40,7 +44,13 @@
                                 </form>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                Tidak ada data dokter.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
