@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 namespace App\Http\Controllers;
 
@@ -12,56 +12,101 @@ class TransaksiController extends Controller
     public function index()
     {
         $data = Transaksi::with(['pendaftaran.pasien'])->latest()->get();
-        $pendaftaran = Pendaftaran::latest()->get();
+        return view('transaksi.index', compact('data'));
+    }
 
-        return view('transaksi.index', compact('data', 'pendaftaran'));
+    public function create()
+    {
+        // Hanya tampilkan pendaftaran yang belum membuat transaksi
+        $pendaftaran = Pendaftaran::doesntHave('transaksi')->with('pasien')->get();
+        return view('transaksi.create', compact('pendaftaran'));
     }
 
     public function store(Request $request)
     {
-        // Validasi minimal 1 item
         $request->validate([
             'pendaftaran_id' => 'required|exists:pendaftaran,id',
-            'keterangan.*' => 'nullable|string',
-            'harga.*' => 'nullable|numeric'
+            'keterangan.*' => 'required|string',
+            'harga.*' => 'required|numeric|min:1',
         ]);
 
-        // Hitung total hanya untuk harga yang valid
-        $total = 0;
-        foreach ($request->harga as $index => $harga) {
-            if (!empty($harga) && !empty($request->keterangan[$index])) {
-                $total += $harga;
-            }
-        }
-
-        // Simpan transaksi utama
         $transaksi = Transaksi::create([
             'pendaftaran_id' => $request->pendaftaran_id,
-            'total' => $total,
-            'status' => 'belum_dibayar'
+            'total' => $request->total ?? array_sum($request->harga),
+            'status' => 'belum_dibayar',
         ]);
 
-        // Simpan detail transaksi (skip jika kosong)
-        foreach ($request->keterangan as $key => $ket) {
-            if (!empty($ket) && !empty($request->harga[$key])) {
+        foreach ($request->keterangan as $key => $value) {
+            if ($value && $request->harga[$key] > 0) {
                 TransaksiDetail::create([
                     'transaksi_id' => $transaksi->id,
-                    'keterangan' => $ket,
-                    'harga' => $request->harga[$key]
+                    'keterangan' => $value,
+                    'harga' => $request->harga[$key],
                 ]);
             }
         }
 
-        return redirect()
-            ->route('transaksi.index')
-            ->with('success', 'Transaksi berhasil dibuat!');
+        return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil dibuat.');
     }
 
-    public function update($id)
+    public function show($id)
     {
-        $data = Transaksi::findOrFail($id);
-        $data->update(['status' => 'sudah_dibayar']);
+        $transaksi = Transaksi::with(['detail', 'pendaftaran.pasien'])->findOrFail($id);
+        return view('transaksi.show', compact('transaksi'));
+    }
 
-        return back()->with('success', 'Pembayaran berhasil!');
+    public function edit($id)
+    {
+        $transaksi = Transaksi::with('detail')->findOrFail($id);
+        $pendaftaran = Pendaftaran::with('pasien')->get();
+
+        return view('transaksi.edit', compact('transaksi', 'pendaftaran'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'pendaftaran_id' => 'required|exists:pendaftaran,id',
+            'keterangan.*' => 'required|string',
+            'harga.*' => 'required|numeric|min:1',
+        ]);
+
+        $transaksi = Transaksi::findOrFail($id);
+
+        $transaksi->update([
+            'pendaftaran_id' => $request->pendaftaran_id,
+            'total' => array_sum($request->harga),
+        ]);
+
+        // Hapus detail lama lalu ganti dengan yang baru
+        TransaksiDetail::where('transaksi_id', $id)->delete();
+
+        foreach ($request->keterangan as $key => $value) {
+            TransaksiDetail::create([
+                'transaksi_id' => $transaksi->id,
+                'keterangan' => $value,
+                'harga' => $request->harga[$key],
+            ]);
+        }
+
+        return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+
+        // Hapus detail saat transaksi dihapus
+        TransaksiDetail::where('transaksi_id', $id)->delete();
+        $transaksi->delete();
+
+        return back()->with('success', 'Transaksi berhasil dihapus.');
+    }
+
+    // Tambahan: Update status ke lunas
+    public function bayar($id)
+    {
+        Transaksi::where('id', $id)->update(['status' => 'sudah_dibayar']);
+        return back()->with('success', 'Transaksi berhasil dibayar.');
     }
 }

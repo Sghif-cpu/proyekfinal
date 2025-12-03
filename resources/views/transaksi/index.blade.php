@@ -2,75 +2,63 @@
 
 @section('content')
 <div class="container">
-    <h3>Form Kasir</h3>
+    <h3>Data Transaksi</h3>
 
-    <form action="{{ route('transaksi.store') }}" method="POST">
-        @csrf
-        
-        <label>Pilih Pendaftaran</label>
-        <select name="pendaftaran_id" class="form-control" required>
-            @foreach($pendaftaran as $p)
-                <option value="{{ $p->id }}">{{ $p->pasien->nama ?? 'Tidak ada nama' }}</option>
-            @endforeach
-        </select>
+    <a href="{{ route('transaksi.create') }}" class="btn btn-primary mb-3">+ Tambah Transaksi</a>
 
-        <hr>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-        <div id="item-container">
-            <div class="row mb-2">
-                <div class="col">
-                    <input type="text" name="keterangan[]" class="form-control" placeholder="Keterangan">
-                </div>
-                <div class="col">
-                    <input type="number" name="harga[]" class="form-control harga" placeholder="Harga">
-                </div>
-            </div>
-        </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama Pasien</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Tanggal Transaksi</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($data as $item)
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $item->pendaftaran->pasien->nama ?? '-' }}</td>
+                <td>Rp {{ number_format($item->total, 0, ',', '.') }}</td>
+                <td>
+                    @if($item->status == 'belum_dibayar')
+                        <span class="badge bg-danger text-white">Belum Dibayar</span>
+                    @else
+                        <span class="badge bg-success text-white">Sudah Dibayar</span>
+                    @endif
+                </td>
+                <td>{{ $item->created_at->format('d-m-Y') }}</td>
+                <td>
+                    <a href="{{ route('transaksi.show', $item->id) }}" class="btn btn-info btn-sm">Detail</a>
+                    <a href="{{ route('transaksi.edit', $item->id) }}" class="btn btn-warning btn-sm">Edit</a>
 
-        <button type="button" id="add" class="btn btn-info btn-sm">+ Tambah Item</button>
+                    <form action="{{ route('transaksi.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus transaksi ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm">Hapus</button>
+                    </form>
 
-        <hr>
-
-        <h4>Total: <span id="totalDisplay">Rp 0</span></h4>
-        <input type="hidden" name="total" id="totalInput">
-
-        <button class="btn btn-primary">Simpan Transaksi</button>
-    </form>
-
+                    @if($item->status == 'belum_dibayar')
+                        <form action="{{ route('transaksi.bayar', $item->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button class="btn btn-success btn-sm">Bayar</button>
+                        </form>
+                    @endif
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Belum ada transaksi</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
 </div>
-
-<script>
-    function hitungTotal() {
-        let total = 0;
-        document.querySelectorAll('.harga').forEach(input => {
-            total += Number(input.value);
-        });
-
-        document.getElementById('totalDisplay').innerText = formatRupiah(total);
-        document.getElementById('totalInput').value = total;
-    }
-
-    function formatRupiah(angka) {
-        return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-
-    document.getElementById('add').addEventListener('click', function() {
-        document.getElementById('item-container').insertAdjacentHTML('beforeend', `
-            <div class="row mb-2">
-                <div class="col"><input type="text" name="keterangan[]" class="form-control"></div>
-                <div class="col"><input type="number" name="harga[]" class="form-control harga"></div>
-            </div>
-        `);
-        updateListener();
-    });
-
-    function updateListener() {
-        document.querySelectorAll('.harga').forEach(input => {
-            input.removeEventListener('input', hitungTotal);
-            input.addEventListener('input', hitungTotal);
-        });
-    }
-
-    updateListener();
-</script>
 @endsection

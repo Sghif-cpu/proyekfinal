@@ -56,17 +56,27 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 */
 Route::middleware('auth')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | RESOURCE ROUTES
-    |--------------------------------------------------------------------------
-    */
+    # RESOURCE ROUTES
     Route::resource('pasien', PasienController::class);
     Route::resource('pendaftaran', PendaftaranController::class);
     Route::resource('rekam-medis', RekamMedisController::class);
     Route::resource('dokter', DokterController::class);
     Route::resource('obat', ObatController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | TRANSAKSI (Kasir)
+    |--------------------------------------------------------------------------
+    |
+    | Sudah otomatis punya routes:
+    | index, create, store, show, edit, update, destroy
+    |
+    */
     Route::resource('transaksi', TransaksiController::class);
+
+    # Tambahan fitur transaksi
+    Route::post('/transaksi/{id}/bayar', [TransaksiController::class, 'bayar'])->name('transaksi.bayar');
+    Route::get('/transaksi/{id}/cetak', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
 
     /*
     |--------------------------------------------------------------------------
