@@ -7,6 +7,7 @@
         <div class="card-body">
             <form action="{{ route('dokter.store') }}" method="POST">
                 @csrf
+                
                 <div class="mb-3">
                     <label>Nama Dokter</label>
                     <input type="text" name="nama" class="form-control" value="{{ old('nama') }}">
@@ -16,8 +17,11 @@
                     <label>Poli</label>
                     <select name="poli_id" class="form-select">
                         <option value="">-- Pilih Poli --</option>
-                        @foreach($polis as $p)
-                            <option value="{{ $p->id }}" {{ old('poli_id') == $p->id ? 'selected':'' }}>{{ $p->nama }}</option>
+                        @foreach($poli as $p)
+                            <option value="{{ $p->id }}" 
+                                {{ old('poli_id') == $p->id ? 'selected' : '' }}>
+                                {{ $p->nama_poli }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
