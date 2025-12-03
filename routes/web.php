@@ -11,6 +11,7 @@ use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\LabPemeriksaanController;
+use App\Http\Controllers\PoliController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,23 @@ Route::middleware('auth')->group(function () {
     Route::resource('dokter', DokterController::class);
     Route::resource('obat', ObatController::class);
     Route::resource('transaksi', TransaksiController::class);
+    Route::resource('poli', PoliController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | CETAK REKAM MEDIS (PDF) — WAJIB DITAMBAHKAN
+    |--------------------------------------------------------------------------
+    */
+    Route::get('rekam-medis/{id}/print', [RekamMedisController::class, 'print'])
+        ->name('rekam-medis.print');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ROUTE AJAX GET DOKTER BERDASARKAN POLI
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/get-dokter/{poli_id}', [DokterController::class, 'getByPoli'])
+        ->name('dokter.byPoli');
 
     /*
     |--------------------------------------------------------------------------

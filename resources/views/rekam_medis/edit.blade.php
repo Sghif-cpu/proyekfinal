@@ -1,47 +1,59 @@
 @extends('layouts.app')
 
 @section('content')
-<h4 class="mb-3">Edit Pemeriksaan</h4>
+<div class="container">
 
-<div class="card">
-<div class="card-body">
-
-    <div class="mb-3">
-        <label class="fw-bold">Data Pasien</label>
-        <div class="p-3 bg-light rounded border">
-            <p class="mb-1"><b>Nama:</b> {{ $data->pendaftaran->pasien->nama }}</p>
-            <p class="mb-1"><b>Dokter:</b> {{ $data->pendaftaran->dokter->nama_dokter }}</p>
-            <p class="mb-0"><b>No RM:</b> {{ $data->pendaftaran->pasien->no_rm }}</p>
-        </div>
-    </div>
+    <h4 class="mb-3">Edit Rekam Medis</h4>
 
     <form action="{{ route('rekam-medis.update', $data->id) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <div class="mb-3">
-            <label>Diagnosa</label>
-            <textarea name="diagnosa" class="form-control" rows="3">{{ $data->diagnosa }}</textarea>
+        <div class="row">
+
+            {{-- INFORMASI PENDAFTARAN --}}
+            <div class="col-md-12 mb-3">
+                <label class="fw-bold">Data Pendaftaran</label>
+
+                <div class="border rounded p-3 bg-light">
+                    <p class="mb-1"><b>Pasien:</b> {{ $data->pendaftaran->pasien->nama }}</p>
+                    <p class="mb-1"><b>Dokter:</b> {{ $data->pendaftaran->dokter->nama ?? $data->pendaftaran->dokter->nama_dokter }}</p>
+                    <p class="mb-0"><b>Tgl Daftar:</b> {{ $data->pendaftaran->created_at->format('d-m-Y') }}</p>
+                </div>
+
+                {{-- Hidden: supaya tetap ikut saat update --}}
+                <input type="hidden" name="pendaftaran_id" value="{{ $data->pendaftaran_id }}">
+            </div>
+
+            {{-- DIAGNOSA --}}
+            <div class="col-md-12 mb-3">
+                <label>Diagnosa</label>
+                <textarea name="diagnosa" class="form-control" rows="3">{{ $data->diagnosa }}</textarea>
+            </div>
+
+            {{-- TINDAKAN --}}
+            <div class="col-md-12 mb-3">
+                <label>Tindakan</label>
+                <textarea name="tindakan" class="form-control" rows="3">{{ $data->tindakan }}</textarea>
+            </div>
+
+            {{-- CATATAN --}}
+            <div class="col-md-12 mb-3">
+                <label>Catatan</label>
+                <textarea name="catatan" class="form-control" rows="3">{{ $data->catatan }}</textarea>
+            </div>
+
         </div>
 
-        <div class="mb-3">
-            <label>Tindakan</label>
-            <textarea name="tindakan" class="form-control" rows="3">{{ $data->tindakan }}</textarea>
-        </div>
-
-        <div class="mb-3">
-            <label>Catatan Tambahan</label>
-            <textarea name="catatan" class="form-control" rows="3">{{ $data->catatan }}</textarea>
-        </div>
-
-        <button class="btn btn-success">
-            <i class="fas fa-save"></i> Update Pemeriksaan
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Update
         </button>
 
-        <a href="{{ route('rekam-medis.show', $data->id) }}" class="btn btn-secondary">Kembali</a>
+        <a href="{{ route('rekam-medis.index') }}" class="btn btn-secondary">
+            Batal
+        </a>
 
     </form>
 
-</div>
 </div>
 @endsection

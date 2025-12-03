@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\RekamMedis;
 use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RekamMedisController extends Controller
 {
     // =====================================================
-    // 1. TAMPILKAN SEMUA REKAM MEDIS
+    // 1. LIST / INDEX
     // =====================================================
     public function index()
     {
@@ -23,36 +24,40 @@ class RekamMedisController extends Controller
         return view('rekam_medis.index', compact('data'));
     }
 
+
     // =====================================================
-    // 2. FORM PEMBUATAN REKAM MEDIS (Pemeriksaan Baru)
+    // 2. FORM CREATE
     // =====================================================
-    public function create(Request $request)
+    public function create()
     {
-        // Validasi & ambil data pendaftaran
+        // Semua pendaftaran pasien
         $pendaftaran = Pendaftaran::with(['pasien', 'dokter'])
-            ->findOrFail($request->pendaftaran_id);
+            ->latest()
+            ->get();
 
         return view('rekam_medis.create', compact('pendaftaran'));
     }
 
+
     // =====================================================
-    // 3. SIMPAN DATA PEMERIKSAAN BARU
+    // 3. SIMPAN PEMERIKSAAN
     // =====================================================
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'pendaftaran_id' => 'required|exists:pendaftaran,id',
             'diagnosa'       => 'nullable|string',
             'tindakan'       => 'nullable|string',
             'catatan'        => 'nullable|string',
         ]);
 
-        RekamMedis::create($request->all());
+        RekamMedis::create($validated);
 
         return redirect()
             ->route('rekam-medis.index')
             ->with('success', 'Pemeriksaan berhasil disimpan');
     }
+
 
     // =====================================================
     // 4. DETAIL REKAM MEDIS
@@ -62,15 +67,16 @@ class RekamMedisController extends Controller
         $data = RekamMedis::with([
                 'pendaftaran.pasien',
                 'pendaftaran.dokter',
-                'resep'
+                'resep',
             ])
             ->findOrFail($id);
 
         return view('rekam_medis.show', compact('data'));
     }
 
+
     // =====================================================
-    // 5. FORM EDIT PEMERIKSAAN
+    // 5. FORM EDIT
     // =====================================================
     public function edit($id)
     {
@@ -83,30 +89,29 @@ class RekamMedisController extends Controller
         return view('rekam_medis.edit', compact('data'));
     }
 
+
     // =====================================================
-    // 6. UPDATE PEMERIKSAAN
+    // 6. UPDATE DATA
     // =====================================================
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'diagnosa' => 'nullable|string',
             'tindakan' => 'nullable|string',
             'catatan'  => 'nullable|string',
         ]);
 
-        $rm = RekamMedis::findOrFail($id);
-
-        $rm->update(
-            $request->only('diagnosa', 'tindakan', 'catatan')
-        );
+        $rekam = RekamMedis::findOrFail($id);
+        $rekam->update($validated);
 
         return redirect()
             ->route('rekam-medis.show', $id)
             ->with('success', 'Data pemeriksaan diperbarui');
     }
 
+
     // =====================================================
-    // 7. HAPUS REKAM MEDIS
+    // 7. HAPUS DATA
     // =====================================================
     public function destroy($id)
     {
@@ -115,5 +120,24 @@ class RekamMedisController extends Controller
         return redirect()
             ->route('rekam-medis.index')
             ->with('success', 'Rekam medis berhasil dihapus');
+    }
+
+
+    // =====================================================
+    // 8. CETAK PDF
+    // =====================================================
+    public function print($id)
+    {
+        $data = RekamMedis::with([
+                'pendaftaran.pasien',
+                'pendaftaran.dokter',
+                'resep'
+            ])
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('rekam_medis.print', compact('data'))
+                ->setPaper('A4', 'portrait');
+
+        return $pdf->stream("Rekam-Medis-{$data->id}.pdf");
     }
 }
