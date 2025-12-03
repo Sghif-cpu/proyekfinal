@@ -2,45 +2,47 @@
 
 @section('content')
 <div class="container">
-    <h3>Tambah Transaksi Baru</h3>
+    <h3>Edit Transaksi</h3>
     <a href="{{ route('transaksi.index') }}" class="btn btn-secondary btn-sm mb-3">⬅ Kembali</a>
 
-    <form action="{{ route('transaksi.store') }}" method="POST">
+    <form action="{{ route('transaksi.update', $transaksi->id) }}" method="POST">
         @csrf
-        
-        <div class="mb-3">
-            <label>Pilih Pendaftaran</label>
-            <select name="pendaftaran_id" class="form-control" required>
-                <option value="" disabled selected>-- Pilih Pasien --</option>
-                @foreach($pendaftaran as $p)
-                    <option value="{{ $p->id }}">
-                        {{ $p->pasien->nama ?? 'Tidak ada nama' }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        @method('PUT')
+
+        <label>Pendaftaran</label>
+        <select name="pendaftaran_id" class="form-control" required>
+            @foreach($pendaftaran as $p)
+                <option value="{{ $p->id }}" {{ $p->id == $transaksi->pendaftaran_id ? 'selected' : '' }}>
+                    {{ $p->pasien->nama }}
+                </option>
+            @endforeach
+        </select>
 
         <hr>
 
         <div id="item-container">
+            @foreach($transaksi->detail as $item)
             <div class="row mb-2">
                 <div class="col">
-                    <input type="text" name="keterangan[]" class="form-control" placeholder="Keterangan" required>
+                    <input type="text" name="keterangan[]" class="form-control"
+                           value="{{ $item->keterangan }}" required>
                 </div>
                 <div class="col">
-                    <input type="number" name="harga[]" class="form-control harga" placeholder="Harga" required>
+                    <input type="number" name="harga[]" class="form-control harga"
+                           value="{{ $item->harga }}" required>
                 </div>
             </div>
+            @endforeach
         </div>
 
         <button type="button" id="add" class="btn btn-info btn-sm">+ Tambah Item</button>
 
         <hr>
 
-        <h4>Total: <span id="totalDisplay">Rp 0</span></h4>
-        <input type="hidden" name="total" id="totalInput">
+        <h4>Total: <span id="totalDisplay">Rp {{ number_format($transaksi->total, 0, ',', '.') }}</span></h4>
+        <input type="hidden" name="total" id="totalInput" value="{{ $transaksi->total }}">
 
-        <button class="btn btn-primary">💾 Simpan Transaksi</button>
+        <button class="btn btn-success">Perbarui</button>
     </form>
 </div>
 
@@ -59,7 +61,7 @@
         return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
-    document.getElementById('add').addEventListener('click', function() {
+    document.getElementById('add').addEventListener('click', function () {
         document.getElementById('item-container').insertAdjacentHTML('beforeend', `
             <div class="row mb-2">
                 <div class="col"><input type="text" name="keterangan[]" class="form-control" required></div>
