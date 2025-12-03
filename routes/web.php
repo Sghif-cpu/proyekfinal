@@ -63,7 +63,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('rekam-medis', RekamMedisController::class);
     Route::resource('dokter', DokterController::class);
 
-    // ⭐ ROUTE OBAT (NEW)
+    // ✅ ROUTE POLI (DITAMBAHKAN)
+    Route::resource('poli', PoliController::class);
+
+    // ⭐ ROUTE OBAT
     Route::resource('obat', ObatController::class);
     Route::resource('transaksi', TransaksiController::class);
 
@@ -75,15 +78,14 @@ Route::middleware('auth')->group(function () {
     Route::get('pendaftaran/cetak/{id}', [PendaftaranController::class, 'cetak'])
         ->name('pendaftaran.cetak');
 
-
     /*
     |--------------------------------------------------------------------------
-    | LAB PEMERIKSAAN  (SUDAH AMAN DARI ERROR)
+    | LAB PEMERIKSAAN
     |--------------------------------------------------------------------------
     */
     Route::prefix('lab')->name('lab.')->group(function () {
 
-        // ✅ INI YANG DIPERBAIKI (parameter jadi OPTIONAL)
+        // Parameter OPTIONAL
         Route::get('/{rekam_medis_id?}', [LabPemeriksaanController::class, 'index'])->name('index');
 
         Route::get('/{rekam_medis_id}/create', [LabPemeriksaanController::class, 'create'])->name('create');
