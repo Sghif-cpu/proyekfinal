@@ -66,7 +66,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('pendaftaran', PendaftaranController::class);
     Route::resource('rekam-medis', RekamMedisController::class);
     Route::resource('dokter', DokterController::class);
+
+    // ⭐ ROUTE OBAT (NEW)
     Route::resource('obat', ObatController::class);
+
     Route::resource('transaksi', TransaksiController::class);
 
     /** ✅ FIX UNTUK ERROR kamu */
