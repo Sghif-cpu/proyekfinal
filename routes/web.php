@@ -57,11 +57,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 */
 Route::middleware('auth')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | RESOURCE ROUTES
-    |--------------------------------------------------------------------------
-    */
+    # RESOURCE ROUTES
     Route::resource('pasien', PasienController::class);
     Route::resource('pendaftaran', PendaftaranController::class);
     Route::resource('rekam-medis', RekamMedisController::class);
@@ -69,11 +65,7 @@ Route::middleware('auth')->group(function () {
 
     // ⭐ ROUTE OBAT (NEW)
     Route::resource('obat', ObatController::class);
-
     Route::resource('transaksi', TransaksiController::class);
-
-    /** ✅ FIX UNTUK ERROR kamu */
-    Route::resource('poli', PoliController::class);   // <-- INI YANG KURANG
 
     /*
     |--------------------------------------------------------------------------
