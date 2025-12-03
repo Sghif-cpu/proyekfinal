@@ -68,15 +68,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('dokter', DokterController::class);
     Route::resource('obat', ObatController::class);
     Route::resource('transaksi', TransaksiController::class);
-    Route::resource('poli', PoliController::class);
-
-    /*
-    |--------------------------------------------------------------------------
-    | ROUTE AJAX GET DOKTER BERDASARKAN POLI
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/get-dokter/{poli_id}', [DokterController::class, 'getByPoli'])
-        ->name('dokter.byPoli');
 
     /*
     |--------------------------------------------------------------------------
