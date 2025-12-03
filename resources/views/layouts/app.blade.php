@@ -143,7 +143,7 @@
         <i class="fas fa-stethoscope"></i> <span>Rekam Medis</span>
     </a>
 
-    <a href="{{ route('lab.index') }}">
+    <a href="#">
         <i class="fas fa-vials"></i> Lab
     </a>
 

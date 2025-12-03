@@ -2,94 +2,95 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\LabPemeriksaan;
 use App\Models\RekamMedis;
+use Illuminate\Http\Request;
 
 class LabPemeriksaanController extends Controller
 {
-    public function index(Request $request, $rekam_medis_id = null)
+    // ============================
+    // TAMPILKAN LAB PER REKAM MEDIS
+    // ============================
+    public function index($rekamMedisId)
     {
-        $tanggal_mulai   = $request->tanggal_mulai;
-        $tanggal_selesai = $request->tanggal_selesai;
+        $rm = RekamMedis::with(['pendaftaran.pasien', 'lab'])
+            ->findOrFail($rekamMedisId);
 
-        $query = LabPemeriksaan::with(['rekamMedis.pendaftaran.pasien', 'rekamMedis.pendaftaran.dokter']);
-
-        // Jika berdasarkan rekam medis
-        if ($rekam_medis_id) {
-            $query->where('rekam_medis_id', $rekam_medis_id);
-        }
-
-        // Filter tanggal dari created_at
-        if ($tanggal_mulai && $tanggal_selesai) {
-            $query->whereBetween('created_at', [
-                $tanggal_mulai . ' 00:00:00',
-                $tanggal_selesai . ' 23:59:59'
-            ]);
-        }
-
-        $labs = $query->latest()->paginate(10);
-
-        return view('lab.index', compact('labs', 'rekam_medis_id'));
+        return view('lab.index', compact('rm'));
     }
 
-    public function create($rekam_medis_id)
+    // ============================
+    // FORM TAMBAH LAB
+    // ============================
+    public function create($rekamMedisId)
     {
-        $rekam = RekamMedis::with(['pendaftaran.pasien', 'pendaftaran.dokter'])
-            ->findOrFail($rekam_medis_id);
+        $rm = RekamMedis::with('pendaftaran.pasien')
+            ->findOrFail($rekamMedisId);
 
         return view('lab.create', compact('rekam'));
     }
 
+    // ======================================================
+    // STORE
+    // ======================================================
     public function store(Request $request)
     {
         $request->validate([
-            'rekam_medis_id'   => 'required',
-            'nama_pemeriksaan' => 'required',
-            'hasil'             => 'nullable',
-            'satuan'            => 'nullable'
+            'rekam_medis_id' => 'required|exists:rekam_medis,id',
+            'nama_pemeriksaan' => 'required|string',
+            'hasil' => 'nullable|string',
+            'satuan' => 'nullable|string',
         ]);
 
         LabPemeriksaan::create($request->all());
 
-        return redirect()->route('lab.index', $request->rekam_medis_id)
-            ->with('success', 'Data lab berhasil disimpan');
+        return redirect()
+            ->route('lab.index', $request->rekam_medis_id)
+            ->with('success', 'Data pemeriksaan lab berhasil ditambahkan');
     }
 
+    // ======================================================
+    // EDIT
+    // ======================================================
     public function edit($id)
     {
-        $data = LabPemeriksaan::with(['rekamMedis.pendaftaran.pasien', 'rekamMedis.pendaftaran.dokter'])
-            ->findOrFail($id);
-
+        $data = LabPemeriksaan::findOrFail($id);
         $rekam = $data->rekamMedis;
 
         return view('lab.edit', compact('data', 'rekam'));
     }
 
+    // ======================================================
+    // UPDATE
+    // ======================================================
     public function update(Request $request, $id)
     {
-        $data = LabPemeriksaan::findOrFail($id);
-
         $request->validate([
-            'nama_pemeriksaan' => 'required',
-            'hasil' => 'nullable',
-            'satuan' => 'nullable'
+            'nama_pemeriksaan' => 'required|string',
+            'hasil' => 'nullable|string',
+            'satuan' => 'nullable|string',
         ]);
 
-        $data->update($request->all());
+        $lab = LabPemeriksaan::findOrFail($id);
+        $lab->update($request->only('nama_pemeriksaan', 'hasil', 'satuan'));
 
-        return redirect()->route('lab.index', $data->rekam_medis_id)
-            ->with('success', 'Data lab berhasil diperbarui');
+        return redirect()
+            ->route('lab.index', $lab->rekam_medis_id)
+            ->with('success', 'Data pemeriksaan lab berhasil diperbarui');
     }
 
+    // ======================================================
+    // DELETE
+    // ======================================================
     public function destroy($id)
     {
-        $data = LabPemeriksaan::findOrFail($id);
-        $rekam_medis_id = $data->rekam_medis_id;
+        $lab = LabPemeriksaan::findOrFail($id);
+        $rekamMedisId = $lab->rekam_medis_id;
 
-        $data->delete();
+        $lab->delete();
 
-        return redirect()->route('lab.index', $rekam_medis_id)
-            ->with('success', 'Data lab berhasil dihapus');
+        return redirect()
+            ->route('lab.index', $rekamMedisId)
+            ->with('success', 'Pemeriksaan Lab berhasil dihapus');
     }
 }
