@@ -137,9 +137,8 @@
         <i class="fas fa-stethoscope"></i> <span>Rekam Medis</span>
     </a>
 
-    <!-- ✅ LINK LAB SUDAH BENAR -->
-    <a href="{{ route('rekam-medis.index') }}">
-        <i class="fas fa-vials"></i> <span>Lab</span>
+    <a href="#">
+        <i class="fas fa-vials"></i> Lab
     </a>
 
     <a href="{{ route('obat.index') }}">

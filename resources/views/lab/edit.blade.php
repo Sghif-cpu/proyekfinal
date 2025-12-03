@@ -1,50 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<h4 class="mb-3">Edit Pemeriksaan Lab</h4>
 
-    <h3 class="mb-3">Edit Pemeriksaan Lab</h3>
+<div class="card">
+    <div class="card-body">
 
-    <div class="card mb-3">
-        <div class="card-body">
-            <b>Nama Pasien :</b> {{ $rekam->pendaftaran->pasien->nama }} <br>
-            <b>Dokter :</b> {{ $rekam->pendaftaran->dokter->nama }} <br>
-            <b>ID Rekam Medis :</b> {{ $rekam->id }}
-        </div>
+        <form action="{{ route('lab.update', $data->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
+                <label class="fw-bold">Nama Pemeriksaan</label>
+                <input type="text" name="nama_pemeriksaan"
+                       class="form-control"
+                       value="{{ $data->nama_pemeriksaan }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="fw-bold">Hasil</label>
+                <input type="text" name="hasil"
+                       class="form-control"
+                       value="{{ $data->hasil }}">
+            </div>
+
+            <div class="mb-3">
+                <label class="fw-bold">Satuan</label>
+                <input type="text" name="satuan"
+                       class="form-control"
+                       value="{{ $data->satuan }}">
+            </div>
+
+            <button class="btn btn-success">Update</button>
+            <a href="{{ route('lab.index', $rekam->id) }}" class="btn btn-secondary">Batal</a>
+
+        </form>
+
     </div>
-
-    <form method="POST" action="{{ route('lab.update', $data->id) }}">
-        @csrf
-        @method('PUT')
-
-        <div class="mb-3">
-            <label>Nama Pemeriksaan</label>
-            <input type="text" name="nama_pemeriksaan"
-                   class="form-control"
-                   value="{{ $data->nama_pemeriksaan }}"
-                   required>
-        </div>
-
-        <div class="mb-3">
-            <label>Hasil</label>
-            <input type="text" name="hasil"
-                   class="form-control"
-                   value="{{ $data->hasil }}">
-        </div>
-
-        <div class="mb-3">
-            <label>Satuan</label>
-            <input type="text" name="satuan"
-                   class="form-control"
-                   value="{{ $data->satuan }}">
-        </div>
-
-        <button class="btn btn-primary">Update</button>
-
-        <a href="{{ route('lab.index', $rekam->id) }}"
-           class="btn btn-secondary">
-           Kembali
-        </a>
-    </form>
 </div>
 @endsection
