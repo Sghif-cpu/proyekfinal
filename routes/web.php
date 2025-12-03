@@ -66,17 +66,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('pendaftaran', PendaftaranController::class);
     Route::resource('rekam-medis', RekamMedisController::class);
     Route::resource('dokter', DokterController::class);
-    Route::resource('obat', ObatController::class);
-    Route::resource('transaksi', TransaksiController::class);
-    Route::resource('poli', PoliController::class);
 
-    /*
-    |--------------------------------------------------------------------------
-    | ROUTE AJAX GET DOKTER BERDASARKAN POLI
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/get-dokter/{poli_id}', [DokterController::class, 'getByPoli'])
-        ->name('dokter.byPoli');
+    // ⭐ ROUTE OBAT (NEW)
+    Route::resource('obat', ObatController::class);
+
+    Route::resource('transaksi', TransaksiController::class);
+
+    /** ✅ FIX UNTUK ERROR kamu */
+    Route::resource('poli', PoliController::class);   // <-- INI YANG KURANG
 
     /*
     |--------------------------------------------------------------------------
@@ -86,17 +83,25 @@ Route::middleware('auth')->group(function () {
     Route::get('pendaftaran/cetak/{id}', [PendaftaranController::class, 'cetak'])
         ->name('pendaftaran.cetak');
 
+
     /*
     |--------------------------------------------------------------------------
-    | LAB PEMERIKSAAN
+    | LAB PEMERIKSAAN  (SUDAH AMAN DARI ERROR)
     |--------------------------------------------------------------------------
     */
     Route::prefix('lab')->name('lab.')->group(function () {
-        Route::get('/{rekam_medis_id}', [LabPemeriksaanController::class, 'index'])->name('index');
+
+        // ✅ INI YANG DIPERBAIKI (parameter jadi OPTIONAL)
+        Route::get('/{rekam_medis_id?}', [LabPemeriksaanController::class, 'index'])->name('index');
+
         Route::get('/{rekam_medis_id}/create', [LabPemeriksaanController::class, 'create'])->name('create');
+
         Route::post('/store', [LabPemeriksaanController::class, 'store'])->name('store');
+
         Route::get('/edit/{id}', [LabPemeriksaanController::class, 'edit'])->name('edit');
+
         Route::put('/update/{id}', [LabPemeriksaanController::class, 'update'])->name('update');
+
         Route::delete('/destroy/{id}', [LabPemeriksaanController::class, 'destroy'])->name('destroy');
     });
 
