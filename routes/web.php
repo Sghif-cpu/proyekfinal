@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\LabPemeriksaanController;
 use App\Http\Controllers\PoliController;
+use App\Http\Controllers\PenjaminController;
 
 /*
 |--------------------------------------------------------------------------

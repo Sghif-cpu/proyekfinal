@@ -165,7 +165,7 @@
         <i class="fas fa-hospital-symbol"></i> <span>Data Poli</span>
     </a>
 
-    <a href="#">
+    <a href="{{ route('penjamin.index') }}">
         <i class="fas fa-shield-alt"></i> <span>Penjamin</span>
     </a>
 
