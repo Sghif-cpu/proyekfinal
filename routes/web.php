@@ -15,7 +15,7 @@ use App\Http\Controllers\PoliController;
 
 /*
 |--------------------------------------------------------------------------
-| REDIRECT AWAL
+| REDIRECT LOGIN
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn() => redirect()->route('login'));
@@ -31,114 +31,111 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD (AUTH) - Menu 1
+| DASHBOARD
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard')
-    ->middleware('auth');
-
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
-    | PASIEN - Menu 2
+    | MASTER PASIEN
     |--------------------------------------------------------------------------
     */
     Route::resource('pasien', PasienController::class);
 
     /*
     |--------------------------------------------------------------------------
-    | PENDAFTARAN - Menu 3
+    | PENDAFTARAN
     |--------------------------------------------------------------------------
     */
     Route::resource('pendaftaran', PendaftaranController::class);
-    
-    // Cetak Antrian Pendaftaran
-    Route::get('pendaftaran/cetak/{id}',
+
+    Route::get('pendaftaran/cetak/{id}', 
         [PendaftaranController::class, 'cetak']
     )->name('pendaftaran.cetak');
 
     /*
     |--------------------------------------------------------------------------
-    | REKAM MEDIS - Menu 4
+    | REKAM MEDIS
     |--------------------------------------------------------------------------
     */
     Route::resource('rekam-medis', RekamMedisController::class);
-    
-    // Cetak Rekam Medis (PDF)
-    Route::get('rekam-medis/{id}/print',
+
+    Route::get('rekam-medis/{id}/print', 
         [RekamMedisController::class, 'print']
     )->name('rekam-medis.print');
 
     /*
     |--------------------------------------------------------------------------
-    | LAB PEMERIKSAAN - Menu 5
+    | LAB PERIKSA
     |--------------------------------------------------------------------------
     */
     Route::prefix('lab')->name('lab.')->group(function () {
-        // Global list semua pemeriksaan lab
         Route::get('/', [LabPemeriksaanController::class, 'index'])->name('index');
-
-        // Form create pemeriksaan lab (memerlukan rekam_medis_id)
         Route::get('/create/{rekam_medis_id}', [LabPemeriksaanController::class, 'create'])->name('create');
-
-        // Simpan data lab
         Route::post('/', [LabPemeriksaanController::class, 'store'])->name('store');
-
-        // Edit lab (declare before show)
         Route::get('/{id}/edit', [LabPemeriksaanController::class, 'edit'])->name('edit');
-
-        // Update lab
         Route::put('/{id}', [LabPemeriksaanController::class, 'update'])->name('update');
-
-        // Hapus lab
         Route::delete('/{id}', [LabPemeriksaanController::class, 'destroy'])->name('destroy');
-
-        // List berdasarkan rekam medis (spesifik)
         Route::get('/rekam-medis/{rekam_medis_id}', [LabPemeriksaanController::class, 'index'])->name('byRekamMedis');
-
-        // Detail lab (declare last to avoid catching other routes)
         Route::get('/{id}', [LabPemeriksaanController::class, 'show'])->name('show');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | OBAT & RESEP - Menu 6
+    | OBAT / RESEP
     |--------------------------------------------------------------------------
     */
     Route::resource('obat', ObatController::class);
 
     /*
     |--------------------------------------------------------------------------
-    | KASIR (Transaksi) - Menu 7
-    |--------------------------------------------------------------------------
-    */
-    Route::resource('transaksi', TransaksiController::class);
-
-    /*
-    |--------------------------------------------------------------------------
-    | MASTER DATA - DOKTER - Submenu 1
+    | DOKTER
     |--------------------------------------------------------------------------
     */
     Route::resource('dokter', DokterController::class);
-    
-    // Ajax Dokter By Poli
-    Route::get('get-dokter/{poli_id}',
+
+    Route::get('get-dokter/{poli_id}', 
         [DokterController::class, 'getByPoli']
     )->name('dokter.byPoli');
 
     /*
     |--------------------------------------------------------------------------
-    | MASTER DATA - POLI - Submenu 2
+    | POLI
     |--------------------------------------------------------------------------
     */
     Route::resource('poli', PoliController::class);
 
     /*
     |--------------------------------------------------------------------------
-    | MASTER DATA - PERJAMIN (Belum ada controller)
+    | KASIR / TRANSAKSI
+    |--------------------------------------------------------------------------
+    | → Route dibersihkan, lebih readable
+    | → Memiliki route tambahan:
+    |      transaksi.bayar (POST)
+    |      transaksi.print (GET)
     |--------------------------------------------------------------------------
     */
-    // Route::resource('perjamin', PerjaminController::class);
+    Route::prefix('transaksi')->name('transaksi.')->group(function () {
+
+        // Resource utama (index, create, store, show, edit, update, delete)
+        Route::get('/', [TransaksiController::class, 'index'])->name('index');
+        Route::get('/create', [TransaksiController::class, 'create'])->name('create');
+        Route::post('/', [TransaksiController::class, 'store'])->name('store');
+        Route::get('/{id}', [TransaksiController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [TransaksiController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TransaksiController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TransaksiController::class, 'destroy'])->name('destroy');
+
+        // Tambahan: BAYAR
+        Route::post('/{id}/bayar', [TransaksiController::class, 'bayar'])
+            ->name('bayar');
+
+        // Tambahan: CETAK KWITANSI
+        Route::get('/{id}/print', [TransaksiController::class, 'print'])
+            ->name('print');
+    });
+
 });
