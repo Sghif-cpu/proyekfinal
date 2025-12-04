@@ -143,8 +143,8 @@
         <i class="fas fa-stethoscope"></i> <span>Rekam Medis</span>
     </a>
 
-    <a href="#">
-        <i class="fas fa-vials"></i> <span>Lab</span>
+    <a href="{{ route('lab.index') }}">
+        <i class="fas fa-vials"></i> Lab
     </a>
 
     <a href="{{ route('obat.index') }}">
@@ -216,6 +216,11 @@
         });
     });
 </script>
+
+<!-- Bootstrap JS (bundle includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+@stack('scripts')
 
 </body>
 </html>
