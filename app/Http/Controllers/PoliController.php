@@ -2,42 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Poli;
 use Illuminate\Http\Request;
 
 class PoliController extends Controller
 {
     public function index()
     {
-        return response('Poli index');
+        $data = Poli::all();
+        return view('poli.index', compact('data'));
     }
 
     public function create()
     {
-        return response('Poli create');
+        return view('poli.create');
     }
 
     public function store(Request $request)
     {
-        return response('Poli store');
+        $request->validate([
+            'nama_poli' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string'
+        ]);
+
+        Poli::create($request->all());
+
+        return redirect()->route('poli.index')->with('success','Data poli berhasil ditambahkan');
     }
 
     public function show($id)
     {
-        return response("Poli show: $id");
+        $poli = Poli::findOrFail($id);
+        return view('poli.show', compact('poli'));
     }
 
     public function edit($id)
     {
-        return response("Poli edit: $id");
+        $poli = Poli::findOrFail($id);
+        return view('poli.edit', compact('poli'));
     }
 
     public function update(Request $request, $id)
     {
-        return response("Poli update: $id");
+        $request->validate([
+            'nama_poli' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string'
+        ]);
+
+        $poli = Poli::findOrFail($id);
+        $poli->update($request->all());
+
+        return redirect()->route('poli.index')->with('success','Data poli berhasil diperbarui');
     }
 
     public function destroy($id)
     {
-        return response("Poli destroy: $id");
+        $poli = Poli::findOrFail($id);
+        $poli->delete();
+
+        return redirect()->route('poli.index')->with('success','Data poli berhasil dihapus');
     }
 }
