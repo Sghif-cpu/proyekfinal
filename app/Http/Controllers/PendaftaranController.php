@@ -32,20 +32,12 @@ class PendaftaranController extends Controller
         $penjamin = Penjamin::all();
         $poli     = Poli::all();
 
-        // AUTO RESET PER HARI ✅
         $hariIni = Carbon::today();
-
-        $lastAntrian = Pendaftaran::whereDate('tanggal_daftar', $hariIni)
-                            ->max('no_antrian');
-
+        $lastAntrian = Pendaftaran::whereDate('tanggal_daftar', $hariIni)->max('no_antrian');
         $no_antrian = $lastAntrian ? $lastAntrian + 1 : 1;
 
         return view('pendaftaran.create', compact(
-            'pasien',
-            'dokter',
-            'penjamin',
-            'poli',
-            'no_antrian'
+            'pasien','dokter','penjamin','poli','no_antrian'
         ));
     }
 
@@ -60,11 +52,7 @@ class PendaftaranController extends Controller
         ]);
 
         $hariIni = Carbon::today();
-
-        // AUTO NOMOR ANTRIAN ✅
-        $lastAntrian = Pendaftaran::whereDate('tanggal_daftar', $hariIni)
-                            ->max('no_antrian');
-
+        $lastAntrian = Pendaftaran::whereDate('tanggal_daftar', $hariIni)->max('no_antrian');
         $no_antrian = $lastAntrian ? $lastAntrian + 1 : 1;
 
         $pendaftaran = Pendaftaran::create([
@@ -74,13 +62,15 @@ class PendaftaranController extends Controller
             'penjamin_id'    => $request->penjamin_id,
             'no_antrian'     => $no_antrian,
             'tanggal_daftar' => $hariIni,
-            'keluhan'         => $request->keluhan,
-            'status'         => 'Terdaftar'
+            'status'         => 'Terdaftar',
+            'keluhan'        => $request->keluhan
         ]);
 
-        return redirect()
-            ->route('pendaftaran.cetak', $pendaftaran->id)
-            ->with('success', 'Pendaftaran berhasil!');
+        // 🔥 simpan ID untuk membuat tombol cetak muncul
+        session()->flash('no_antrian_cetak', $pendaftaran->id);
+
+        // 🔥 kembali ke halaman form tanpa mencetak
+        return redirect()->back()->with('success', 'Data berhasil disimpan, silakan cetak jika diperlukan.');
     }
 
     public function show(Pendaftaran $pendaftaran)
@@ -96,11 +86,7 @@ class PendaftaranController extends Controller
         $poli     = Poli::all();
 
         return view('pendaftaran.edit', compact(
-            'pendaftaran',
-            'pasien',
-            'dokter',
-            'penjamin',
-            'poli'
+            'pendaftaran','pasien','dokter','penjamin','poli'
         ));
     }
 
@@ -120,28 +106,31 @@ class PendaftaranController extends Controller
             'keluhan'     => $request->keluhan
         ]);
 
-        return redirect()
-            ->route('pendaftaran.index')
-            ->with('success', 'Data pendaftaran diperbarui');
+        return redirect()->route('pendaftaran.index')
+            ->with('success', 'Pendaftaran berhasil diperbarui');
     }
 
     public function destroy(Pendaftaran $pendaftaran)
     {
         $pendaftaran->delete();
 
-        return redirect()
-            ->route('pendaftaran.index')
-            ->with('success','Data pendaftaran dihapus');
+        return redirect()->route('pendaftaran.index')
+            ->with('success','Data pendaftaran berhasil dihapus');
     }
 
     public function cetak($id)
     {
-        $pendaftaran = Pendaftaran::with(['pasien','dokter','penjamin','poli'])
-                            ->findOrFail($id);
+        $pendaftaran = Pendaftaran::with(['pasien','dokter','penjamin','poli'])->findOrFail($id);
 
         $pdf = Pdf::loadView('pendaftaran.cetak', compact('pendaftaran'))
-                    ->setPaper('A5', 'portrait');
+            ->setPaper('A5', 'portrait');
 
         return $pdf->stream('antrian-'.$pendaftaran->no_antrian.'.pdf');
+    }
+
+    public function getDokter($poli_id)
+    {
+        $dokter = Dokter::where('poli_id', $poli_id)->get(['id','nama']);
+        return response()->json($dokter);
     }
 }

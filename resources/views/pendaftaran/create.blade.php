@@ -8,13 +8,15 @@
     <div class="row justify-content-center">
         <div class="col-12">
 
+            {{-- Alert sukses hanya muncul setelah simpan --}}
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show">
-                    {{ session('success') }}
+                    <strong>Data berhasil disimpan, silakan cetak jika diperlukan.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
+            {{-- Error --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
@@ -42,6 +44,7 @@
                             <label class="form-label fw-bold">Nomor Antrian</label>
                             <input type="text" class="form-control text-center fw-bold fs-4 bg-light"
                                    value="{{ $no_antrian }}" readonly>
+                            <input type="hidden" name="no_antrian" value="{{ $no_antrian }}">
                         </div>
 
                         {{-- PASIEN --}}
@@ -66,7 +69,7 @@
                             </select>
                         </div>
 
-                        {{-- DOKTER FILTER OTOMATIS --}}
+                        {{-- DOKTER --}}
                         <div class="mb-3">
                             <label class="form-label">Dokter</label>
                             <select name="dokter_id" id="dokterSelect" class="form-select" required>
@@ -100,15 +103,19 @@
 
                         <input type="hidden" name="status" value="Terdaftar">
 
+                        {{-- BUTTON --}}
                         <div class="d-flex flex-wrap gap-2">
                             <button type="submit" class="btn btn-success px-4">
                                 <i class="fas fa-save me-1"></i> Simpan
                             </button>
 
-                            <a href="{{ route('pendaftaran.cetak', $no_antrian) }}"
-                               class="btn btn-primary px-4" target="_blank">
-                                <i class="fas fa-print me-1"></i> Cetak Antrian
-                            </a>
+                            {{-- Tombol cetak hanya manual, tidak otomatis --}}
+                            @if(session('no_antrian_cetak'))
+                                <a href="{{ route('pendaftaran.cetak', session('no_antrian_cetak')) }}"
+                                   class="btn btn-primary px-4" target="_blank">
+                                   <i class="fas fa-print me-1"></i> Cetak Antrian
+                                </a>
+                            @endif
 
                             <a href="{{ route('pendaftaran.index') }}" class="btn btn-secondary px-4">
                                 <i class="fas fa-arrow-left me-1"></i> Kembali
@@ -133,16 +140,16 @@ document.getElementById('poliSelect').addEventListener('change', function () {
     let dokterSelect = document.getElementById('dokterSelect');
     dokterSelect.innerHTML = '<option value="">Memuat...</option>';
 
-    if (poliId === "") {
+    if (!poliId) {
         dokterSelect.innerHTML = '<option value="">-- Pilih Dokter --</option>';
         return;
     }
 
     fetch('/get-dokter/' + poliId)
-        .then(response => response.json())
+        .then(res => res.json())
         .then(data => {
             dokterSelect.innerHTML = '<option value="">-- Pilih Dokter --</option>';
-            data.forEach(function (d) {
+            data.forEach(d => {
                 dokterSelect.innerHTML += `<option value="${d.id}">${d.nama}</option>`;
             });
         });

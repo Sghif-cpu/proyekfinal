@@ -6,6 +6,7 @@ use App\Models\RekamMedis;
 use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 class RekamMedisController extends Controller
 {
@@ -21,7 +22,7 @@ class RekamMedisController extends Controller
             ->latest()
             ->get();
 
-        return view('rekam_medis.index', compact('data'));
+        return view('rekam-medis.index', compact('data'));
     }
 
 
@@ -35,7 +36,7 @@ class RekamMedisController extends Controller
             ->latest()
             ->get();
 
-        return view('rekam_medis.create', compact('pendaftaran'));
+        return view('rekam-medis.create', compact('pendaftaran'));
     }
 
 
@@ -51,11 +52,16 @@ class RekamMedisController extends Controller
             'catatan'        => 'nullable|string',
         ]);
 
-        RekamMedis::create($validated);
+        try {
+            RekamMedis::create($validated);
 
-        return redirect()
-            ->route('rekam-medis.index')
-            ->with('success', 'Pemeriksaan berhasil disimpan');
+            return redirect()
+                ->route('rekam-medis.index')
+                ->with('success', 'Pemeriksaan berhasil disimpan');
+        } catch (\Throwable $e) {
+            Log::error('RekamMedis store error: '.$e->getMessage(), ['exception' => $e]);
+            return back()->withInput()->with('error', 'Terjadi error saat menyimpan pemeriksaan. Silakan cek log.');
+        }
     }
 
 
@@ -71,7 +77,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        return view('rekam_medis.show', compact('data'));
+        return view('rekam-medis.show', compact('data'));
     }
 
 
@@ -86,7 +92,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        return view('rekam_medis.edit', compact('data'));
+        return view('rekam-medis.edit', compact('data'));
     }
 
 
@@ -101,12 +107,17 @@ class RekamMedisController extends Controller
             'catatan'  => 'nullable|string',
         ]);
 
-        $rekam = RekamMedis::findOrFail($id);
-        $rekam->update($validated);
+        try {
+            $rekam = RekamMedis::findOrFail($id);
+            $rekam->update($validated);
 
-        return redirect()
-            ->route('rekam-medis.show', $id)
-            ->with('success', 'Data pemeriksaan diperbarui');
+            return redirect()
+                ->route('rekam-medis.show', $id)
+                ->with('success', 'Data pemeriksaan diperbarui');
+        } catch (\Throwable $e) {
+            Log::error('RekamMedis update error: '.$e->getMessage(), ['id' => $id, 'exception' => $e]);
+            return back()->withInput()->with('error', 'Terjadi error saat memperbarui. Silakan cek log.');
+        }
     }
 
 
@@ -135,7 +146,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        $pdf = Pdf::loadView('rekam_medis.print', compact('data'))
+        $pdf = Pdf::loadView('rekam-medis.print', compact('data'))
                 ->setPaper('A4', 'portrait');
 
         return $pdf->stream("Rekam-Medis-{$data->id}.pdf");

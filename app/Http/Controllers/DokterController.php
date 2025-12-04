@@ -20,16 +20,46 @@ class DokterController extends Controller
         return view('dokter.create', compact('poli'));
     }
 
+    /**
+     * 🔥 Generate nomor SIP otomatis
+     * Format: SIP0001, SIP0002, SIP0003, dst.
+     */
+    private function generateSip()
+    {
+        // Ambil SIP terakhir
+        $last = Dokter::orderBy('id', 'DESC')->value('sip');
+
+        if (!$last) {
+            return "SIP0001";
+        }
+
+        // Ambil angka di belakang "SIP"
+        $number = intval(substr($last, 3));
+
+        // Increment + format ulang
+        $newNumber = str_pad($number + 1, 4, '0', STR_PAD_LEFT);
+
+        return "SIP" . $newNumber;
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'nama' => 'required',
             'poli_id' => 'nullable',
-            'sip' => 'nullable',
             'no_hp' => 'nullable',
         ]);
 
-        Dokter::create($request->all());
+        // 🔥 generate SIP otomatis
+        $sipBaru = $this->generateSip();
+
+        Dokter::create([
+            'nama' => $request->nama,
+            'poli_id' => $request->poli_id,
+            'no_hp' => $request->no_hp,
+            'sip' => $sipBaru, // SIP otomatis
+        ]);
+
         return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil ditambahkan!');
     }
 
@@ -51,11 +81,16 @@ class DokterController extends Controller
         $request->validate([
             'nama' => 'required',
             'poli_id' => 'nullable',
-            'sip' => 'nullable',
             'no_hp' => 'nullable',
         ]);
 
-        Dokter::findOrFail($id)->update($request->all());
+        Dokter::findOrFail($id)->update([
+            'nama' => $request->nama,
+            'poli_id' => $request->poli_id,
+            'no_hp' => $request->no_hp,
+            // ❗ SIP tidak diupdate (karena nomor tetap)
+        ]);
+
         return redirect()->route('dokter.index')->with('success', 'Data dokter berhasil diperbarui!');
     }
 
