@@ -42,6 +42,7 @@
                         <td class="fw-bold">{{ $row->no_antrian }}</td>
                         <td>{{ $row->pasien->nama ?? '-' }}</td>
                         <td>{{ $row->dokter->nama_dokter ?? '-' }}</td>
+                        <td>{{ $row->poli->nama_poli ?? '-' }}</td>
                         <td>{{ $row->penjamin->nama_penjamin ?? '-' }}</td>
                         <td>{{ $row->tanggal_daftar->format('d-m-Y') }}</td>
                         <td>

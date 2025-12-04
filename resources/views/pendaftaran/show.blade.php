@@ -14,11 +14,15 @@
             </tr>
             <tr>
                 <th>Pasien</th>
-                <td>{{ $pendaftaran->pasien->nama }}</td>
+                <td>{{ $pendaftaran->pasien->nama}}</td>
             </tr>
             <tr>
                 <th>Dokter</th>
-                <td>{{ $pendaftaran->dokter->nama }}</td>
+                <td>{{ $pendaftaran->dokter->nama_dokter}}</td>
+            </tr>
+            <tr>
+                <th>Poli</th>
+                <td>{{ $pendaftaran->poli->nama_poli}}</td>
             </tr>
             <tr>
                 <th>Penjamin</th>
