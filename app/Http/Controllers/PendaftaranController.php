@@ -32,12 +32,13 @@ class PendaftaranController extends Controller
         $penjamin = Penjamin::all();
         $poli     = Poli::all();
 
-        // Auto reset nomor antrian harian
         $hariIni = Carbon::today();
         $lastAntrian = Pendaftaran::whereDate('tanggal_daftar', $hariIni)->max('no_antrian');
         $no_antrian = $lastAntrian ? $lastAntrian + 1 : 1;
 
-        return view('pendaftaran.create', compact('pasien','dokter','penjamin','poli','no_antrian'));
+        return view('pendaftaran.create', compact(
+            'pasien','dokter','penjamin','poli','no_antrian'
+        ));
     }
 
     public function store(Request $request)
@@ -51,8 +52,6 @@ class PendaftaranController extends Controller
         ]);
 
         $hariIni = Carbon::today();
-
-        // Auto nomor antrian
         $lastAntrian = Pendaftaran::whereDate('tanggal_daftar', $hariIni)->max('no_antrian');
         $no_antrian = $lastAntrian ? $lastAntrian + 1 : 1;
 
@@ -67,8 +66,11 @@ class PendaftaranController extends Controller
             'keluhan'        => $request->keluhan
         ]);
 
-        return redirect()->route('pendaftaran.cetak', $pendaftaran->id)
-            ->with('success', 'Pendaftaran berhasil dibuat!');
+        // 🔥 simpan ID untuk membuat tombol cetak muncul
+        session()->flash('no_antrian_cetak', $pendaftaran->id);
+
+        // 🔥 kembali ke halaman form tanpa mencetak
+        return redirect()->back()->with('success', 'Data berhasil disimpan, silakan cetak jika diperlukan.');
     }
 
     public function show(Pendaftaran $pendaftaran)
@@ -111,6 +113,7 @@ class PendaftaranController extends Controller
     public function destroy(Pendaftaran $pendaftaran)
     {
         $pendaftaran->delete();
+
         return redirect()->route('pendaftaran.index')
             ->with('success','Data pendaftaran berhasil dihapus');
     }
@@ -123,5 +126,11 @@ class PendaftaranController extends Controller
             ->setPaper('A5', 'portrait');
 
         return $pdf->stream('antrian-'.$pendaftaran->no_antrian.'.pdf');
+    }
+
+    public function getDokter($poli_id)
+    {
+        $dokter = Dokter::where('poli_id', $poli_id)->get(['id','nama']);
+        return response()->json($dokter);
     }
 }

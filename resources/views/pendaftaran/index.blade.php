@@ -30,31 +30,44 @@
                     <tr>
                         <th style="width: 120px;">No Antrian</th>
                         <th>Nama Pasien</th>
-                        <th>Dokter</th>
+                        <th>Nama Dokter</th>
                         <th>Penjamin</th>
                         <th style="width: 150px;">Tanggal</th>
                         <th style="width: 180px;">Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @forelse($pendaftaran as $row)
                     <tr>
                         <td class="fw-bold">{{ $row->no_antrian }}</td>
+
+                        {{-- NAMA PASIEN --}}
                         <td>{{ $row->pasien->nama ?? '-' }}</td>
-                        <td>{{ $row->dokter->nama_dokter ?? '-' }}</td>
+
+                        {{-- NAMA DOKTER (FIX) --}}
+                        <td>{{ $row->dokter->nama ?? '-' }}</td>
+
+                        {{-- PENJAMIN --}}
                         <td>{{ $row->penjamin->nama_penjamin ?? '-' }}</td>
+
+                        {{-- TANGGAL --}}
                         <td>{{ $row->tanggal_daftar->format('d-m-Y') }}</td>
+
                         <td>
-                            <a href="{{ route('pendaftaran.show',$row->id) }}" class="btn btn-info btn-sm me-1">
+                            <a href="{{ route('pendaftaran.show',$row->id) }}"
+                               class="btn btn-info btn-sm me-1">
                                 Detail
                             </a>
-                            <a href="{{ route('pendaftaran.cetak',$row->id) }}" 
-                                target="_blank" 
-                                class="btn btn-danger btn-sm">
+
+                            <a href="{{ route('pendaftaran.cetak',$row->id) }}"
+                               target="_blank"
+                               class="btn btn-danger btn-sm">
                                 <i class="fas fa-print"></i> Cetak
                             </a>
                         </td>
                     </tr>
+
                     @empty
                     <tr>
                         <td colspan="6" class="text-center py-4">Tidak ada data</td>

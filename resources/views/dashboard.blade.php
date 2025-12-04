@@ -2,6 +2,23 @@
 
 @section('content')
 
+<style>
+    .dashboard-card {
+        min-height: 100%;
+    }
+    .chart-container {
+        height: 260px;
+        position: relative;
+    }
+    .chart-container-lg {
+        height: 320px;
+        position: relative;
+    }
+    .gap-row {
+        row-gap: 1.5rem !important;
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold">📊 Dashboard</h3>
     <span class="text-muted">{{ date('l, d F Y') }}</span>
@@ -63,17 +80,19 @@
 </div>
 
 <!-- CHART & WELCOME -->
-<div class="row g-4">
+<div class="row gap-row">
 
-    <div class="col-md-8">
-        <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 dashboard-card">
             <h5 class="fw-bold mb-3">Statistik Singkat</h5>
-            <canvas id="myChart" height="130"></canvas>
+            <div class="chart-container-lg">
+                <canvas id="myChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 p-4 bg-light">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-light dashboard-card">
             <h5 class="fw-bold mb-2">👋 Selamat Datang</h5>
             <p class="mb-2">
                 Halo <b>{{ auth()->user()->name ?? 'Admin' }}</b>,
@@ -90,115 +109,184 @@
 
 </div>
 
-<!-- CHART TAMBAHAN -->
-<div class="row g-4 mt-3">
+<!-- LINE + PIE + DONUT -->
+<div class="row gap-row mt-3">
 
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 dashboard-card">
             <h5 class="fw-bold mb-3">Perkembangan Per Bulan</h5>
-            <canvas id="lineChart" height="150"></canvas>
+            <div class="chart-container">
+                <canvas id="lineChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4 dashboard-card">
             <h5 class="fw-bold mb-3">Proporsi Data</h5>
-            <canvas id="pieChart" height="150"></canvas>
+            <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4 dashboard-card">
             <h5 class="fw-bold mb-3">Perbandingan Pasien</h5>
-            <canvas id="donutChart" height="150"></canvas>
+            <div class="chart-container">
+                <canvas id="donutChart"></canvas>
+            </div>
         </div>
     </div>
 
 </div>
 
-<!-- CHART JS -->
+<!-- POLI & DOKTER -->
+<div class="row gap-row mt-3">
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 dashboard-card">
+            <h5 class="fw-bold mb-3">Grafik Antrian per Poli</h5>
+            <div class="chart-container-lg">
+                <canvas id="chartPoli"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 dashboard-card">
+            <h5 class="fw-bold mb-3">Dokter dengan Pasien Terbanyak</h5>
+            <div class="chart-container-lg">
+                <canvas id="chartDokter"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// ==================== BAR CHART ====================
+/* ========================== DATA ========================== */
+const totalPasien = {{ \App\Models\Pasien::count() }};
+const totalPendaftaran = {{ \App\Models\Pendaftaran::count() }};
+const totalDokter = {{ \App\Models\Dokter::count() }};
+const totalTransaksi = {{ \App\Models\Transaksi::count() }};
+const daftarHariIni = {{ \App\Models\Pendaftaran::whereDate('tanggal_daftar', date('Y-m-d'))->count() }};
+
+// Poli
+const poliLabels = {!! json_encode(\App\Models\Poli::pluck('nama_poli')) !!};
+const poliCounts = {!! json_encode(
+    \App\Models\Poli::withCount('pendaftaran')->pluck('pendaftaran_count')
+) !!};
+
+// Dokter
+const dokterLabels = {!! json_encode(\App\Models\Dokter::pluck('nama')) !!};
+const dokterCounts = {!! json_encode(
+    \App\Models\Dokter::withCount('pendaftaran')
+        ->orderBy('pendaftaran_count','desc')
+        ->pluck('pendaftaran_count')
+) !!};
+
+/* ========================== RANDOM COLOR ========================== */
+function randColor(op = 0.7) {
+    return `rgba(${Math.floor(Math.random()*255)}, 
+                 ${Math.floor(Math.random()*255)}, 
+                 ${Math.floor(Math.random()*255)}, ${op})`;
+}
+function rangeColor(n, op=0.7) { 
+    return Array.from({length:n}, () => randColor(op)); 
+}
+
+/* ========================== CHARTS ========================== */
+
+// BAR
 new Chart(document.getElementById('myChart'), {
     type: 'bar',
     data: {
         labels: ['Pasien', 'Pendaftaran', 'Dokter', 'Transaksi'],
         datasets: [{
-            label: 'Jumlah Data',
-            data: [
-                {{ \App\Models\Pasien::count() }},
-                {{ \App\Models\Pendaftaran::count() }},
-                {{ \App\Models\Dokter::count() }},
-                {{ \App\Models\Transaksi::count() }},
-            ]
+            backgroundColor: rangeColor(4),
+            data: [totalPasien, totalPendaftaran, totalDokter, totalTransaksi]
         }]
     },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: false }},
-        scales: { y: { beginAtZero: true }}
-    }
+    options: { plugins: { legend: { display: false }} }
 });
 
-// ==================== LINE CHART ====================
+// LINE
 new Chart(document.getElementById('lineChart'), {
     type: 'line',
     data: {
         labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
         datasets: [{
             label: 'Pasien Baru',
+            borderColor: randColor(1),
+            backgroundColor: randColor(0.2),
             borderWidth: 2,
             data: [
-                {{ \App\Models\Pasien::whereMonth('created_at',1)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',2)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',3)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',4)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',5)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',6)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',7)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',8)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',9)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',10)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',11)->count() }},
-                {{ \App\Models\Pasien::whereMonth('created_at',12)->count() }},
+                @foreach(range(1,12) as $b)
+                    {{ \App\Models\Pasien::whereMonth('created_at',$b)->count() }},
+                @endforeach
             ]
         }]
     },
-    options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true }},
-    }
+    options: { scales: { y: { beginAtZero: true }} }
 });
 
-// ==================== PIE CHART ====================
+// PIE
 new Chart(document.getElementById('pieChart'), {
     type: 'pie',
     data: {
         labels: ['Pasien', 'Pendaftaran', 'Dokter', 'Transaksi'],
         datasets: [{
-            data: [
-                {{ \App\Models\Pasien::count() }},
-                {{ \App\Models\Pendaftaran::count() }},
-                {{ \App\Models\Dokter::count() }},
-                {{ \App\Models\Transaksi::count() }},
-            ]
+            backgroundColor: rangeColor(4),
+            data: [totalPasien, totalPendaftaran, totalDokter, totalTransaksi]
         }]
     }
 });
 
-// ==================== DOUGHNUT CHART ====================
+// DONUT
 new Chart(document.getElementById('donutChart'), {
     type: 'doughnut',
     data: {
-        labels: ['Pasien Terdaftar', 'Pendaftaran Hari Ini'],
+        labels: ['Total Pasien', 'Pendaftaran Hari Ini'],
         datasets: [{
-            data: [
-                {{ \App\Models\Pasien::count() }},
-                {{ \App\Models\Pendaftaran::whereDate('tanggal_daftar', date('Y-m-d'))->count() }},
-            ]
+            backgroundColor: rangeColor(2),
+            data: [totalPasien, daftarHariIni]
         }]
+    }
+});
+
+// POLI BAR
+new Chart(document.getElementById('chartPoli'), {
+    type: 'bar',
+    data: {
+        labels: poliLabels,
+        datasets: [{
+            backgroundColor: rangeColor(poliLabels.length),
+            data: poliCounts
+        }]
+    },
+    options: { 
+        scales: { y: { beginAtZero: true }},
+        plugins:{ legend:{ display:false }}
+    }
+});
+
+// DOKTER HORIZONTAL
+new Chart(document.getElementById('chartDokter'), {
+    type: 'bar',
+    data: {
+        labels: dokterLabels,
+        datasets: [{
+            backgroundColor: rangeColor(dokterLabels.length),
+            data: dokterCounts
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true }},
+        plugins: { legend: { display: false }}
     }
 });
 </script>

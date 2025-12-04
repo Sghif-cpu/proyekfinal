@@ -21,7 +21,7 @@ class RekamMedisController extends Controller
             ->latest()
             ->get();
 
-        return view('rekam_medis.index', compact('data'));
+        return view('rekam-medis.index', compact('data'));
     }
 
 
@@ -35,7 +35,7 @@ class RekamMedisController extends Controller
             ->latest()
             ->get();
 
-        return view('rekam_medis.create', compact('pendaftaran'));
+        return view('rekam-medis.create', compact('pendaftaran'));
     }
 
 
@@ -71,7 +71,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        return view('rekam_medis.show', compact('data'));
+        return view('rekam-medis.show', compact('data'));
     }
 
 
@@ -86,7 +86,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        return view('rekam_medis.edit', compact('data'));
+        return view('rekam-medis.edit', compact('data'));
     }
 
 
@@ -135,7 +135,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        $pdf = Pdf::loadView('rekam_medis.print', compact('data'))
+        $pdf = Pdf::loadView('rekam-medis.print', compact('data'))
                 ->setPaper('A4', 'portrait');
 
         return $pdf->stream("Rekam-Medis-{$data->id}.pdf");

@@ -28,7 +28,7 @@
 
                 <div class="mb-3">
                     <label>SIP</label>
-                    <input type="text" name="sip" class="form-control" value="{{ old('sip') }}">
+                    <input type="text" name="sip" class="form-control" value="{{ old('sip') }}" readonly>
                 </div>
 
                 <div class="mb-3">
@@ -42,4 +42,48 @@
         </div>
     </div>
 </div>
+
+{{-- ============================================================= --}}
+{{--                  AUTO-GELAR + AUTO SIP GLOBAL                 --}}
+{{-- ============================================================= --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const inputNama = document.querySelector('input[name="nama"]');
+    const inputSip  = document.querySelector('input[name="sip"]');
+    const selectPoli = document.querySelector('select[name="poli_id"]');
+
+    /* ----------- AUTO-GELAR DR / DRG ----------- */
+    function updateGelar() {
+        if (!inputNama) return;
+
+        let nama = inputNama.value.trim();
+        if (nama === '') return;
+
+        // Buang gelar lama
+        nama = nama.replace(/^drg\.\s*/i, '')
+                   .replace(/^dr\.\s*/i, '');
+
+        const isGigi = selectPoli.options[selectPoli.selectedIndex]?.text.toLowerCase().includes('gigi');
+        const gelar = isGigi ? 'drg.' : 'dr.';
+
+        inputNama.value = `${gelar} ${nama}`;
+    }
+
+    inputNama.addEventListener('blur', updateGelar);
+    selectPoli.addEventListener('change', updateGelar);
+
+    /* ----------- AUTO GENERATE SIP GLOBAL ----------- */
+    async function generateSip() {
+        const res = await fetch(`/api/sip-next`);
+        const data = await res.json();
+        inputSip.value = data.next_sip;
+    }
+
+    // SIP otomatis ketika halaman dibuka dan saat memilih poli
+    generateSip();
+    selectPoli.addEventListener('change', generateSip);
+
+});
+</script>
 @endsection

@@ -2,47 +2,41 @@
 
 @section('content')
 <div class="container">
-    <h3>Edit Transaksi</h3>
+    <h3>Buat Transaksi</h3>
     <a href="{{ route('transaksi.index') }}" class="btn btn-secondary btn-sm mb-3">⬅ Kembali</a>
 
-    <form action="{{ route('transaksi.update', $transaksi->id) }}" method="POST">
+    <form action="{{ route('transaksi.store') }}" method="POST">
         @csrf
-        @method('PUT')
 
         <label>Pendaftaran</label>
         <select name="pendaftaran_id" class="form-control" required>
+            <option value="">-- Pilih Pasien --</option>
             @foreach($pendaftaran as $p)
-                <option value="{{ $p->id }}" {{ $p->id == $transaksi->pendaftaran_id ? 'selected' : '' }}>
-                    {{ $p->pasien->nama }}
-                </option>
+                <option value="{{ $p->id }}">{{ $p->pasien->nama }}</option>
             @endforeach
         </select>
 
         <hr>
 
         <div id="item-container">
-            @foreach($transaksi->detail as $item)
             <div class="row mb-2">
                 <div class="col">
-                    <input type="text" name="keterangan[]" class="form-control"
-                           value="{{ $item->keterangan }}" required>
+                    <input type="text" name="keterangan[]" class="form-control" required placeholder="Keterangan">
                 </div>
                 <div class="col">
-                    <input type="number" name="harga[]" class="form-control harga"
-                           value="{{ $item->harga }}" required>
+                    <input type="number" name="harga[]" class="form-control harga" required placeholder="Harga">
                 </div>
             </div>
-            @endforeach
         </div>
 
         <button type="button" id="add" class="btn btn-info btn-sm">+ Tambah Item</button>
 
         <hr>
 
-        <h4>Total: <span id="totalDisplay">Rp {{ number_format($transaksi->total, 0, ',', '.') }}</span></h4>
-        <input type="hidden" name="total" id="totalInput" value="{{ $transaksi->total }}">
+        <h4>Total: <span id="totalDisplay">Rp 0</span></h4>
+        <input type="hidden" name="total" id="totalInput" value="0">
 
-        <button class="btn btn-success">Perbarui</button>
+        <button class="btn btn-primary">Simpan</button>
     </form>
 </div>
 
@@ -73,7 +67,6 @@
 
     function updateListener() {
         document.querySelectorAll('.harga').forEach(input => {
-            input.removeEventListener('input', hitungTotal);
             input.addEventListener('input', hitungTotal);
         });
     }
