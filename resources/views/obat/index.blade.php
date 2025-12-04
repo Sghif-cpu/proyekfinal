@@ -6,11 +6,6 @@
 
     <a href="{{ route('obat.create') }}" class="btn btn-primary mb-3">+ Tambah Obat</a>
 
-    <!-- Tombol Cetak -->
-    <a href="{{ route('obat.cetak') }}" target="_blank" class="btn btn-success mb-3">
-        Cetak Laporan Obat
-    </a>
-
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -23,16 +18,9 @@
                 <th>Satuan</th>
                 <th>Stok</th>
                 <th>Harga</th>
-
-                <!-- ⭐ Tambahan Baru -->
-                <th>Tanggal</th>
-                <th>Cara Bayar</th>
-                <!-- ⭐ -->
-
                 <th>Aksi</th>
             </tr>
         </thead>
-
         <tbody>
             @forelse($obat as $o)
                 <tr>
@@ -41,12 +29,6 @@
                     <td>{{ $o->satuan }}</td>
                     <td>{{ $o->stok }}</td>
                     <td>Rp {{ number_format($o->harga, 0, ',', '.') }}</td>
-
-                    <!-- ⭐ Menampilkan data tambahan -->
-                    <td>{{ $o->tanggal }}</td>
-                    <td>{{ $o->cara_bayar }}</td>
-                    <!-- ⭐ -->
-
                     <td>
                         <a href="{{ route('obat.show', $o->id) }}" class="btn btn-info btn-sm">Detail</a>
                         <a href="{{ route('obat.edit', $o->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -61,9 +43,7 @@
                     </td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="8" class="text-center">Belum ada data obat</td>
-                </tr>
+                <tr><td colspan="6" class="text-center">Belum ada data obat</td></tr>
             @endforelse
         </tbody>
     </table>
