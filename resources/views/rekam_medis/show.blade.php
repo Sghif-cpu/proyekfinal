@@ -26,6 +26,11 @@
                                 <i class="fas fa-print mr-1"></i> PDF
                             </a>
 
+                            <a href="{{ route('rekam-medis.print', $data->id) }}?download=1" 
+                               class="btn btn-primary btn-sm">
+                                <i class="fas fa-download mr-1"></i> Download PDF
+                            </a>
+
                             <a href="{{ route('rekam-medis.index') }}" class="btn btn-secondary btn-sm">
                                 <i class="fas fa-arrow-left mr-1"></i> Kembali
                             </a>
