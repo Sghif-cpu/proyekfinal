@@ -17,11 +17,6 @@
             <input type="text" name="tipe" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-            <label>Keterangan</label>
-            <textarea name="keterangan" class="form-control"></textarea>
-        </div>
-
         <button class="btn btn-primary">Simpan</button>
         <a href="{{ route('penjamin.index') }}" class="btn btn-secondary">Kembali</a>
     </form>

@@ -33,14 +33,12 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Keterangan</th>
                 <th>Harga</th>
             </tr>
         </thead>
         <tbody>
             @foreach($transaksi->detail as $item)
             <tr>
-                <td>{{ $item->keterangan }}</td>
                 <td>Rp {{ number_format($item->harga,0,',','.') }}</td>
             </tr>
             @endforeach

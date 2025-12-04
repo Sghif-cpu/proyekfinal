@@ -26,30 +26,31 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $item->pendaftaran->pasien->nama ?? '-' }}</td>
-                <td>Rp {{ number_format($item->total, 0, ',', '.') }}</td>
+                <td>Rp {{ number_format($item->total,0,',','.') }}</td>
                 <td>
                     @if($item->status == 'belum_dibayar')
-                        <span class="badge bg-danger text-white">Belum Dibayar</span>
+                        <span class="badge bg-danger">Belum Dibayar</span>
                     @else
-                        <span class="badge bg-success text-white">Sudah Dibayar</span>
+                        <span class="badge bg-success">Sudah Dibayar</span>
                     @endif
                 </td>
                 <td>{{ $item->created_at->format('d-m-Y') }}</td>
+
                 <td>
                     <a href="{{ route('transaksi.show', $item->id) }}" class="btn btn-info btn-sm">Detail</a>
                     <a href="{{ route('transaksi.edit', $item->id) }}" class="btn btn-warning btn-sm">Edit</a>
 
-                    <form action="{{ route('transaksi.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus transaksi ini?')">
+                    <form action="{{ route('transaksi.destroy', $item->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger btn-sm">Hapus</button>
+                        <button class="btn btn-danger btn-sm" onclick="return confirm('Hapus?')">Hapus</button>
                     </form>
 
                     @if($item->status == 'belum_dibayar')
-                        <form action="{{ route('transaksi.bayar', $item->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button class="btn btn-success btn-sm">Bayar</button>
-                        </form>
+                    <form action="{{ route('transaksi.bayar', $item->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button class="btn btn-success btn-sm">Bayar</button>
+                    </form>
                     @endif
                 </td>
             </tr>

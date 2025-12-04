@@ -8,8 +8,6 @@
         <div class="card-body">
             <p><strong>Nama Penjamin:</strong> {{ $penjamin->nama_penjamin }}</p>
             <p><strong>Tipe:</strong> {{ $penjamin->tipe }}</p>
-            <p><strong>Keterangan:</strong> {{ $penjamin->keterangan }}</p>
-
             <a href="{{ route('penjamin.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
     </div>

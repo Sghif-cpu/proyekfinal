@@ -22,16 +22,19 @@
         </div>
     </form>
 
+    {{-- ================== TABEL GABUNG ================== --}}
     <div class="card shadow-sm">
         <div class="card-body table-responsive">
 
             <table class="table table-bordered table-hover align-middle text-center">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 120px;">No Antrian</th>
+                        <th style="width: 110px;">No Antrian</th>
                         <th>Nama Pasien</th>
-                        <th>Nama Dokter</th>
+                        <th>Dokter</th>
                         <th>Penjamin</th>
+                        <th>Poli</th>
+                        <th>Keluhan</th>
                         <th style="width: 150px;">Tanggal</th>
                         <th style="width: 180px;">Aksi</th>
                     </tr>
@@ -45,23 +48,29 @@
                         {{-- NAMA PASIEN --}}
                         <td>{{ $row->pasien->nama ?? '-' }}</td>
 
-                        {{-- NAMA DOKTER (FIX) --}}
+                        {{-- NAMA DOKTER --}}
                         <td>{{ $row->dokter->nama ?? '-' }}</td>
 
                         {{-- PENJAMIN --}}
                         <td>{{ $row->penjamin->nama_penjamin ?? '-' }}</td>
 
+                        {{-- POLI --}}
+                        <td>{{ $row->poli->nama_poli ?? '-' }}</td>
+
+                        {{-- KELUHAN --}}
+                        <td>{{ $row->keluhan ?? '-' }}</td>
+
                         {{-- TANGGAL --}}
                         <td>{{ $row->tanggal_daftar->format('d-m-Y') }}</td>
 
                         <td>
-                            <a href="{{ route('pendaftaran.show',$row->id) }}"
+                            <a href="{{ route('pendaftaran.show',$row->id) }}" 
                                class="btn btn-info btn-sm me-1">
                                 Detail
                             </a>
 
-                            <a href="{{ route('pendaftaran.cetak',$row->id) }}"
-                               target="_blank"
+                            <a href="{{ route('pendaftaran.cetak',$row->id) }}" 
+                               target="_blank" 
                                class="btn btn-danger btn-sm">
                                 <i class="fas fa-print"></i> Cetak
                             </a>
@@ -70,7 +79,7 @@
 
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-4">Tidak ada data</td>
+                        <td colspan="8" class="text-center py-4">Tidak ada data</td>
                     </tr>
                     @endforelse
                 </tbody>

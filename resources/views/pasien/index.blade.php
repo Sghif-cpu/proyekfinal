@@ -15,11 +15,13 @@
 </div>
 @endif
 
-<div class="card">
+{{-- ================== TABEL GABUNGAN DATA PASIEN ================== --}}
+<div class="card mb-4">
     <div class="table-responsive">
         <table class="table table-bordered table-hover mb-0">
             <thead class="table-dark">
                 <tr>
+                    <th>No</th>
                     <th>No RM</th>
                     <th>Nama</th>
                     <th>L/P</th>
@@ -32,12 +34,16 @@
             <tbody>
                 @forelse($pasien as $p)
                 <tr>
+                    {{-- Nomor urut + pagination --}}
+                    <td>{{ $loop->iteration + ($pasien->currentPage()-1) * $pasien->perPage() }}</td>
+
                     <td>{{ $p->no_rm }}</td>
                     <td>{{ $p->nama }}</td>
                     <td>{{ $p->jenis_kelamin }}</td>
                     <td>{{ $p->tanggal_lahir }}</td>
                     <td>{{ $p->no_hp }}</td>
                     <td>{{ $p->penjamin->nama_penjamin ?? '-' }}</td>
+
                     <td>
                         <a href="{{ route('pasien.show',$p->id) }}" class="btn btn-sm btn-info">Lihat</a>
                         <a href="{{ route('pasien.edit',$p->id) }}" class="btn btn-sm btn-warning">Edit</a>
@@ -53,7 +59,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center">Belum ada data pasien</td>
+                    <td colspan="8" class="text-center">Belum ada data pasien</td>
                 </tr>
                 @endforelse
             </tbody>

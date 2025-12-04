@@ -16,7 +16,6 @@
                 <th>No</th>
                 <th>Nama Penjamin</th>
                 <th>Tipe</th>
-                <th>Keterangan</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -26,7 +25,6 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $p->nama_penjamin }}</td>
                     <td>{{ $p->tipe }}</td>
-                    <td>{{ $p->keterangan }}</td>
                     <td>
                         <a href="{{ route('penjamin.show', $p->id) }}" class="btn btn-info btn-sm">Detail</a>
                         <a href="{{ route('penjamin.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>

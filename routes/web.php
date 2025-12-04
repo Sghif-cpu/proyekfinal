@@ -32,11 +32,16 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD
+| DASHBOARD + ROUTES
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD
+    |--------------------------------------------------------------------------
+    */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /*
@@ -111,17 +116,19 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | KASIR / TRANSAKSI
+    | PENJAMIN  ← TAMBAHAN LENGKAP
     |--------------------------------------------------------------------------
-    | → Route dibersihkan, lebih readable
-    | → Memiliki route tambahan:
-    |      transaksi.bayar (POST)
-    |      transaksi.print (GET)
+    */
+    Route::resource('penjamin', PenjaminController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | KASIR / TRANSAKSI
     |--------------------------------------------------------------------------
     */
     Route::prefix('transaksi')->name('transaksi.')->group(function () {
 
-        // Resource utama (index, create, store, show, edit, update, delete)
+        // Resource utama
         Route::get('/', [TransaksiController::class, 'index'])->name('index');
         Route::get('/create', [TransaksiController::class, 'create'])->name('create');
         Route::post('/', [TransaksiController::class, 'store'])->name('store');

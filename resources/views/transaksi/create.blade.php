@@ -21,9 +21,6 @@
         <div id="item-container">
             <div class="row mb-2">
                 <div class="col">
-                    <input type="text" name="keterangan[]" class="form-control" required placeholder="Keterangan">
-                </div>
-                <div class="col">
                     <input type="number" name="harga[]" class="form-control harga" required placeholder="Harga">
                 </div>
             </div>
@@ -58,7 +55,6 @@
     document.getElementById('add').addEventListener('click', function () {
         document.getElementById('item-container').insertAdjacentHTML('beforeend', `
             <div class="row mb-2">
-                <div class="col"><input type="text" name="keterangan[]" class="form-control" required></div>
                 <div class="col"><input type="number" name="harga[]" class="form-control harga" required></div>
             </div>
         `);
