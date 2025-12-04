@@ -9,23 +9,27 @@
         @method('PUT')
 
         <div class="mb-3">
-            <label>Nama Obat</label>
-            <input type="text" name="nama_obat" class="form-control" value="{{ $obat->nama_obat }}" required>
+            <label for="nama_obat" class="form-label">Nama Obat</label>
+            <input type="text" id="nama_obat" name="nama_obat" class="form-control" 
+                   value="{{ $obat->nama_obat }}" required>
         </div>
 
         <div class="mb-3">
-            <label>Satuan</label>
-            <input type="text" name="satuan" class="form-control" value="{{ $obat->satuan }}" required>
+            <label for="satuan" class="form-label">Satuan</label>
+            <input type="text" id="satuan" name="satuan" class="form-control" 
+                   value="{{ $obat->satuan }}" required>
         </div>
 
         <div class="mb-3">
-            <label>Stok</label>
-            <input type="number" name="stok" class="form-control" value="{{ $obat->stok }}" required>
+            <label for="stok" class="form-label">Stok</label>
+            <input type="number" id="stok" name="stok" class="form-control" 
+                   value="{{ $obat->stok }}" required>
         </div>
 
         <div class="mb-3">
-            <label>Harga</label>
-            <input type="number" step="0.01" name="harga" class="form-control" value="{{ $obat->harga }}" required>
+            <label for="harga" class="form-label">Harga</label>
+            <input type="number" step="0.01" id="harga" name="harga" class="form-control" 
+                   value="{{ $obat->harga }}" required>
         </div>
 
         <button class="btn btn-primary">Update</button>

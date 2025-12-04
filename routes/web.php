@@ -66,8 +66,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('rekam-medis', RekamMedisController::class);
     Route::resource('dokter', DokterController::class);
 
-    // ⭐ ROUTE OBAT (NEW)
+    // ⭐ RESOURCE OBAT
     Route::resource('obat', ObatController::class);
+
+    // ⭐ CETAK LAPORAN OBAT (NEW)
+    Route::get('obat/cetak', [ObatController::class, 'cetak'])
+        ->name('obat.cetak');
 
     Route::resource('transaksi', TransaksiController::class);
 
@@ -89,8 +93,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/{rekam_medis_id}/create', [LabPemeriksaanController::class, 'create'])->name('create');
         Route::post('/store', [LabPemeriksaanController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [LabPemeriksaanController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [LabPemeriksaanController::class, 'update'])->name('update');
+        Route::put('/update/{id}', [LabPemperiksaanController::class, 'update'])->name('update');
         Route::delete('/destroy/{id}', [LabPemeriksaanController::class, 'destroy'])->name('destroy');
+        Route::get('/obat/cetak', [ObatController::class, 'cetak'])->name('obat.cetak');
+
     });
 
 });
