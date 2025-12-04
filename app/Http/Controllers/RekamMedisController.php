@@ -22,7 +22,7 @@ class RekamMedisController extends Controller
             ->latest()
             ->get();
 
-        return view('rekam-medis.index', compact('data'));
+        return view('rekam_medis.index', compact('data'));
     }
 
 
@@ -36,7 +36,7 @@ class RekamMedisController extends Controller
             ->latest()
             ->get();
 
-        return view('rekam-medis.create', compact('pendaftaran'));
+        return view('rekam_medis.create', compact('pendaftaran'));
     }
 
 
@@ -56,7 +56,7 @@ class RekamMedisController extends Controller
             RekamMedis::create($validated);
 
             return redirect()
-                ->route('rekam-medis.index')
+                ->route('rekam_medis.index')
                 ->with('success', 'Pemeriksaan berhasil disimpan');
         } catch (\Throwable $e) {
             Log::error('RekamMedis store error: '.$e->getMessage(), ['exception' => $e]);
@@ -77,7 +77,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        return view('rekam-medis.show', compact('data'));
+        return view('rekam_medis.show', compact('data'));
     }
 
 
@@ -92,7 +92,7 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        return view('rekam-medis.edit', compact('data'));
+        return view('rekam_medis.edit', compact('data'));
     }
 
 
@@ -112,7 +112,7 @@ class RekamMedisController extends Controller
             $rekam->update($validated);
 
             return redirect()
-                ->route('rekam-medis.show', $id)
+                ->route('rekam_medis.show', $id)
                 ->with('success', 'Data pemeriksaan diperbarui');
         } catch (\Throwable $e) {
             Log::error('RekamMedis update error: '.$e->getMessage(), ['id' => $id, 'exception' => $e]);
@@ -129,7 +129,7 @@ class RekamMedisController extends Controller
         RekamMedis::findOrFail($id)->delete();
 
         return redirect()
-            ->route('rekam-medis.index')
+            ->route('rekam_medis.index')
             ->with('success', 'Rekam medis berhasil dihapus');
     }
 
@@ -146,14 +146,14 @@ class RekamMedisController extends Controller
             ])
             ->findOrFail($id);
 
-        $pdf = Pdf::loadView('rekam-medis.print', compact('data'))
+        $pdf = Pdf::loadView('rekam_medis.print', compact('data'))
                 ->setPaper('A4', 'portrait');
 
         // Jika query param download=1 diberikan, kirim sebagai attachment
         if ($request->query('download')) {
-            return $pdf->download("Rekam-Medis-{$data->id}.pdf");
+            return $pdf->download("Rekam_Medis-{$data->id}.pdf");
         }
 
-        return $pdf->stream("Rekam-Medis-{$data->id}.pdf");
+        return $pdf->stream("Rekam_Medis-{$data->id}.pdf");
     }
 }

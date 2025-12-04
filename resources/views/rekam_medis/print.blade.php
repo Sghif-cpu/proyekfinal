@@ -24,12 +24,11 @@
         @if(file_exists($logoPath))
             <div><img src="{{ $logoPath }}" alt="Logo" style="height:60px;"></div>
         @else
-            <div style="font-size:18px; font-weight:700; color:#2c3e50;">KLINIK/RS - Nama Klinik</div>
+            <div style="font-size:18px; font-weight:700; color:#2c3e50;">KLINIK BAKTI MEDIKA</div>
         @endif
         <div style="line-height:1;">
-            <div style="font-size:14px; font-weight:700;">KLINIK/RS - Nama Klinik</div>
-            <div style="font-size:12px;">Alamat Klinik — Jalan Contoh No. 1, Kota</div>
-            <div style="font-size:12px;">Tel: (021) 000-000</div>
+        <div style="font-size:12px;">Jl. Kenanga Raya No. 15, Citra Mandiri, Kota Pratama</div>
+        <div style="font-size:12px;">Tel: (031) 8801-4421</div>
         </div>
     </div>
 
