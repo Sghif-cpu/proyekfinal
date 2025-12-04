@@ -95,10 +95,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('lab.create') }}" method="GET">
+                <form id="pilihRekamForm">
                     <div class="mb-3">
                         <label class="form-label">Pilih Rekam Medis</label>
-                        <select name="rekam_medis_id" class="form-select" required>
+                        <select id="pilihRekamSelect" name="rekam_medis_id" class="form-select" required>
                             <option value="">-- Pilih Rekam Medis --</option>
                             @foreach($rekamMedisList as $rm)
                             <option value="{{ $rm->id }}">
@@ -110,7 +110,7 @@
                     </div>
                     <div class="text-end">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Lanjut</button>
+                        <button type="button" id="pilihRekamBtn" class="btn btn-primary">Lanjut</button>
                     </div>
                 </form>
             </div>
@@ -118,5 +118,22 @@
     </div>
 </div>
 @endif
+
+@push('scripts')
+<script>
+document.getElementById('pilihRekamBtn')?.addEventListener('click', function(){
+    const select = document.getElementById('pilihRekamSelect');
+    const val = select?.value;
+    if (!val) {
+        alert('Pilih Rekam Medis terlebih dahulu.');
+        return;
+    }
+
+    // Redirect ke route /lab/create/{id}
+    const base = '{{ url('lab/create') }}';
+    window.location.href = base + '/' + val;
+});
+</script>
+@endpush
 
 @endsection

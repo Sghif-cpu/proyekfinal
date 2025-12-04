@@ -13,17 +13,40 @@
 
             <div class="mb-3">
                 <label class="fw-bold">Nama Pemeriksaan</label>
-                <input type="text" name="nama_pemeriksaan" class="form-control" required>
+                <input type="text"
+                       name="nama_pemeriksaan"
+                       class="form-control @error('nama_pemeriksaan') is-invalid @enderror"
+                       value="{{ old('nama_pemeriksaan') }}"
+                       maxlength="255"
+                       required>
+                @error('nama_pemeriksaan')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-3">
                 <label class="fw-bold">Hasil</label>
-                <input type="text" name="hasil" class="form-control">
+                <input type="text"
+                       name="hasil"
+                       class="form-control @error('hasil') is-invalid @enderror"
+                       value="{{ old('hasil') }}"
+                       maxlength="1000">
+                @error('hasil')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-3">
                 <label class="fw-bold">Satuan</label>
-                <input type="text" name="satuan" class="form-control" placeholder="mg/dL, %, g/dL, dll">
+                <input type="text"
+                       name="satuan"
+                       class="form-control @error('satuan') is-invalid @enderror"
+                       value="{{ old('satuan') }}"
+                       maxlength="50"
+                       placeholder="mg/dL, %, g/dL, dll">
+                @error('satuan')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <button class="btn btn-success">Simpan</button>

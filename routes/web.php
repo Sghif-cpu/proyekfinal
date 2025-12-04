@@ -92,31 +92,29 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('lab')->name('lab.')->group(function () {
-        // List semua pemeriksaan lab (opsional: lihat berdasarkan rekam medis)
-        Route::get('/{rekam_medis_id?}', [LabPemeriksaanController::class, 'index'])->name('index');
-        
-        // Form create pemeriksaan lab (tanpa parameter)
-        Route::get('/create', [LabPemeriksaanController::class, 'create'])->name('create');
-        
+        // Global list semua pemeriksaan lab
+        Route::get('/', [LabPemeriksaanController::class, 'index'])->name('index');
+
+        // Form create pemeriksaan lab (memerlukan rekam_medis_id)
+        Route::get('/create/{rekam_medis_id}', [LabPemeriksaanController::class, 'create'])->name('create');
+
         // Simpan data lab
         Route::post('/', [LabPemeriksaanController::class, 'store'])->name('store');
-        
-        // Detail lab
-        Route::get('/{id}', [LabPemeriksaanController::class, 'show'])->name('show');
-        
-        // Edit lab
+
+        // Edit lab (declare before show)
         Route::get('/{id}/edit', [LabPemeriksaanController::class, 'edit'])->name('edit');
-        
+
         // Update lab
         Route::put('/{id}', [LabPemeriksaanController::class, 'update'])->name('update');
-        
+
         // Hapus lab
         Route::delete('/{id}', [LabPemeriksaanController::class, 'destroy'])->name('destroy');
-        
-        // Route khusus jika ingin lihat lab berdasarkan rekam medis
-        Route::get('/rekam-medis/{rekam_medis_id}', 
-            [LabPemeriksaanController::class, 'byRekamMedis']
-        )->name('byRekamMedis');
+
+        // List berdasarkan rekam medis (spesifik)
+        Route::get('/rekam-medis/{rekam_medis_id}', [LabPemeriksaanController::class, 'index'])->name('byRekamMedis');
+
+        // Detail lab (declare last to avoid catching other routes)
+        Route::get('/{id}', [LabPemeriksaanController::class, 'show'])->name('show');
     });
 
     /*

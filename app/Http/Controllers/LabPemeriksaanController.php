@@ -31,7 +31,13 @@ class LabPemeriksaanController extends Controller
             ->latest()
             ->get();
 
-        return view('lab.index', compact('rekam', 'data'));
+        // Ambil list RekamMedis untuk pilihan di modal (mis. 50 terbaru)
+        $rekamMedisList = RekamMedis::with(['pendaftaran.pasien'])
+            ->latest()
+            ->take(50)
+            ->get();
+
+        return view('lab.index', compact('rekam', 'data', 'rekamMedisList'));
         }
 
     // ======================================================
@@ -64,9 +70,9 @@ class LabPemeriksaanController extends Controller
     {
         $validated = $request->validate([
             'rekam_medis_id'   => 'required|exists:rekam_medis,id',
-            'nama_pemeriksaan' => 'required|string',
-            'hasil'            => 'nullable|string',
-            'satuan'           => 'nullable|string',
+            'nama_pemeriksaan' => 'required|string|max:255',
+            'hasil'            => 'nullable|string|max:1000',
+            'satuan'           => 'nullable|string|max:50',
         ]);
 
         LabPemeriksaan::create($validated);
@@ -93,9 +99,9 @@ class LabPemeriksaanController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'nama_pemeriksaan' => 'required|string',
-            'hasil'            => 'nullable|string',
-            'satuan'           => 'nullable|string',
+            'nama_pemeriksaan' => 'required|string|max:255',
+            'hasil'            => 'nullable|string|max:1000',
+            'satuan'           => 'nullable|string|max:50',
         ]);
 
         $lab = LabPemeriksaan::findOrFail($id);
