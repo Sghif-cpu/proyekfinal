@@ -137,7 +137,7 @@ class RekamMedisController extends Controller
     // =====================================================
     // 8. CETAK PDF
     // =====================================================
-    public function print($id)
+    public function print(\Illuminate\Http\Request $request, $id)
     {
         $data = RekamMedis::with([
                 'pendaftaran.pasien',
@@ -148,6 +148,11 @@ class RekamMedisController extends Controller
 
         $pdf = Pdf::loadView('rekam_medis.print', compact('data'))
                 ->setPaper('A4', 'portrait');
+
+        // Jika query param download=1 diberikan, kirim sebagai attachment
+        if ($request->query('download')) {
+            return $pdf->download("Rekam-Medis-{$data->id}.pdf");
+        }
 
         return $pdf->stream("Rekam-Medis-{$data->id}.pdf");
     }
