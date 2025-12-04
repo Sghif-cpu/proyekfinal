@@ -51,26 +51,26 @@
                                     <table class="table table-borderless">
                                         <tr>
                                             <th width="30%">Nama Pasien</th>
-                                            <td>{{ $data->pendaftaran->pasien->nama ?? '-' }}</td>
+                                            <td>{{ optional($data->pendaftaran->pasien)->nama ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Alamat</th>
-                                            <td>{{ $data->pendaftaran->pasien->alamat ?? '-' }}</td>
+                                            <td>{{ optional($data->pendaftaran->pasien)->alamat ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>No. KTP</th>
-                                            <td>{{ $data->pendaftaran->pasien->no_ktp ?? '-' }}</td>
+                                            <td>{{ optional($data->pendaftaran->pasien)->no_ktp ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>No. HP</th>
-                                            <td>{{ $data->pendaftaran->pasien->no_hp ?? '-' }}</td>
+                                            <td>{{ optional($data->pendaftaran->pasien)->no_hp ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Tanggal Lahir</th>
                                             <td>
-                                                @if($data->pendaftaran->pasien->tanggal_lahir)
-                                                    {{ \Carbon\Carbon::parse($data->pendaftaran->pasien->tanggal_lahir)->format('d/m/Y') }}
-                                                    ({{ \Carbon\Carbon::parse($data->pendaftaran->pasien->tanggal_lahir)->age }} tahun)
+                                                @if(optional($data->pendaftaran->pasien)->tanggal_lahir)
+                                                    {{ \Carbon\Carbon::parse(optional($data->pendaftaran->pasien)->tanggal_lahir)->format('d/m/Y') }}
+                                                    ({{ \Carbon\Carbon::parse(optional($data->pendaftaran->pasien)->tanggal_lahir)->age }} tahun)
                                                 @else
                                                     -
                                                 @endif
@@ -93,19 +93,19 @@
                                     <table class="table table-borderless">
                                         <tr>
                                             <th width="30%">Nama Dokter</th>
-                                            <td>{{ $data->pendaftaran->dokter->nama ?? $data->pendaftaran->dokter->nama_dokter }}</td>
+                                            <td>{{ optional($data->pendaftaran->dokter)->nama ?? optional($data->pendaftaran->dokter)->nama_dokter ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>Poli</th>
-                                            <td>{{ $data->pendaftaran->dokter->poli->nama ?? '-' }}</td>
+                                            <td>{{ optional(optional($data->pendaftaran->dokter)->poli)->nama ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>SIP</th>
-                                            <td>{{ $data->pendaftaran->dokter->sip ?? '-' }}</td>
+                                            <td>{{ optional($data->pendaftaran->dokter)->sip ?? '-' }}</td>
                                         </tr>
                                         <tr>
                                             <th>No. HP</th>
-                                            <td>{{ $data->pendaftaran->dokter->no_hp ?? '-' }}</td>
+                                            <td>{{ optional($data->pendaftaran->dokter)->no_hp ?? '-' }}</td>
                                         </tr>
                                     </table>
                                 </div>
