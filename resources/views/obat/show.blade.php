@@ -13,7 +13,7 @@
             </div>
 
             <div class="mb-3">
-                <strong>Satuan:</strong>
+                <strong>Bentuk:</strong>
                 <p>{{ $obat->satuan }}</p>
             </div>
 

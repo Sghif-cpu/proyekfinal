@@ -13,7 +13,7 @@
         </div>
 
         <div class="mb-3">
-            <label>Satuan</label>
+            <label>Bentuk</label>
             <input type="text" name="satuan" class="form-control" required>
         </div>
 

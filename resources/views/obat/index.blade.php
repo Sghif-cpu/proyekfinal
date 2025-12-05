@@ -15,7 +15,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama Obat</th>
-                <th>Satuan</th>
+                <th>Bentuk</th>
                 <th>Stok</th>
                 <th>Harga</th>
                 <th>Created At</th>
