@@ -18,6 +18,8 @@
                 <th>Satuan</th>
                 <th>Stok</th>
                 <th>Harga</th>
+                <th>Created At</th>
+                <th>Updated At</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -29,6 +31,11 @@
                     <td>{{ $o->satuan }}</td>
                     <td>{{ $o->stok }}</td>
                     <td>Rp {{ number_format($o->harga, 0, ',', '.') }}</td>
+
+                    {{-- Tambahan --}}
+                    <td>{{ $o->created_at ? $o->created_at->format('d-m-Y H:i') : '-' }}</td>
+                    <td>{{ $o->updated_at ? $o->updated_at->format('d-m-Y H:i') : '-' }}</td>
+
                     <td>
                         <a href="{{ route('obat.show', $o->id) }}" class="btn btn-info btn-sm">Detail</a>
                         <a href="{{ route('obat.edit', $o->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -43,7 +50,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="text-center">Belum ada data obat</td></tr>
+                <tr><td colspan="8" class="text-center">Belum ada data obat</td></tr>
             @endforelse
         </tbody>
     </table>
