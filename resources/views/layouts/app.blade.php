@@ -140,7 +140,7 @@
     </a>
 
     <a href="{{ route('rekam-medis.index') }}">
-        <i class="fas fa-stethoscope"></i> <span>Rekam Medis</span>
+        <i class="fas fa-stethoscope"></i> <span>Pemeriksaan</span>
     </a>
 
     <a href="{{ route('lab.index') }}">
