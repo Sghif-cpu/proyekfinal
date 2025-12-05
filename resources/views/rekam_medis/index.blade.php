@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h4 class="mb-3">Data Rekam Medis / Pemeriksaan</h4>
+<h4 class="mb-3">Pemeriksaan</h4>
 
 <div class="card">
     <div class="card-body table-responsive">
