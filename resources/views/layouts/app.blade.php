@@ -46,7 +46,7 @@
             transition: .3s;
         }
 
-        /* Hide text when collapsed */
+        /* Hide brand text when collapsed */
         .sidebar.collapsed .brand span {
             display: none;
         }
@@ -68,7 +68,7 @@
             color: white;
         }
 
-        /* CENTER ICONS WHEN COLLAPSED */
+        /* Center menu when collapsed */
         .sidebar.collapsed a {
             justify-content: center;
         }
@@ -103,6 +103,7 @@
             padding: 25px;
             transition: .3s ease;
         }
+
         .content.expanded {
             margin-left: 70px;
         }
@@ -120,10 +121,23 @@
             color: white;
         }
 
+        /* ================================
+           HIDE LOGOUT TEXT WHEN COLLAPSED
+        =================================*/
+        .sidebar.collapsed #btn-logout span {
+            display: none;
+        }
+
+        /* Center logout icon when collapsed */
+        .sidebar.collapsed #btn-logout {
+            justify-content: center !important;
+        }
+
     </style>
 </head>
 <body>
 
+<!-- ======================= SIDEBAR ======================= -->
 <div class="sidebar" id="sidebar">
 
     <div id="toggle-btn">
@@ -179,18 +193,20 @@
         <i class="fas fa-shield-alt"></i> <span>Penjamin</span>
     </a>
 
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-        @csrf
-    </form>
-
+    <!-- Logout Button -->
     <div class="px-3 mt-4">
-        <button id="btn-logout" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2">
-            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-        </button>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button id="btn-logout" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                <i class="fas fa-sign-out-alt"></i> 
+                <span>Logout</span>
+            </button>
+        </form>
     </div>
 
 </div>
 
+<!-- ======================= CONTENT ======================= -->
 <div class="content" id="content">
     @yield('content')
 </div>
