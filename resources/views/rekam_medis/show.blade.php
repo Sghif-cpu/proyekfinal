@@ -5,7 +5,6 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <!-- REKAM MEDIS DETAIL CARD -->
 
         <div class="col-md-9">
             <div class="card">

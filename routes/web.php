@@ -29,12 +29,12 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| MAIN SYSTEM (PROTECTED - AUTH REQUIRED)
+| MAIN SYSTEM (AUTH REQUIRED)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    // Logout (harus dalam auth karena hanya user login yang bisa logout)
+    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dashboard
@@ -63,44 +63,54 @@ Route::middleware('auth')->group(function () {
 
     // Rekam Medis
     Route::resource('rekam-medis', RekamMedisController::class);
-    
-    // Transaksi
-    Route::resource('transaksi', TransaksiController::class);
+
+    // 📌 Print Rekam Medis
+    Route::get('rekam-medis/{id}/print', [RekamMedisController::class, 'print'])
+        ->name('rekam-medis.print');
+
 
     /*
     |--------------------------------------------------------------------------
-    | LABORATORIUM ROUTES (PERBAIKAN UTAMA)
+    | TRANSAKSI ROUTES
     |--------------------------------------------------------------------------
     */
-Route::prefix('lab')->name('lab.')->group(function () {
+    Route::resource('transaksi', TransaksiController::class);
 
-    // INDEX
-    Route::get('/', [LabPemeriksaanController::class, 'index'])->name('index');
+    // 📌 Route BAYAR (menyelesaikan error RouteNotFound)
+    Route::post('transaksi/{id}/bayar', [TransaksiController::class, 'bayar'])
+        ->name('transaksi.bayar');
 
-    // CREATE
-    Route::get('/create', [LabPemeriksaanController::class, 'create'])->name('create');
-    Route::get('/create/{rekam_medis_id}', [LabPemeriksaanController::class, 'create'])
-        ->name('create.with.rm');
+    // 📌 (Opsional) Jika butuh cetak struk
+    // Route::get('transaksi/{id}/cetak', [TransaksiController::class, 'cetak'])
+    //     ->name('transaksi.cetak');
 
-    // STORE
-    Route::post('/', [LabPemeriksaanController::class, 'store'])->name('store');
 
-    // ROUTE KHUSUS REKAM MEDIS (harus sebelum {id})
-    Route::get('/rekam-medis/{rekam_medis_id}', 
-        [LabPemeriksaanController::class, 'byRekamMedis']
-    )->name('byRekamMedis');
+    /*
+    |--------------------------------------------------------------------------
+    | LABORATORIUM ROUTES
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('lab')->name('lab.')->group(function () {
 
-    // EDIT
-    Route::get('/{id}/edit', [LabPemeriksaanController::class, 'edit'])->name('edit');
+        Route::get('/', [LabPemeriksaanController::class, 'index'])->name('index');
 
-    // UPDATE
-    Route::put('/{id}', [LabPemeriksaanController::class, 'update'])->name('update');
+        Route::get('/create', [LabPemeriksaanController::class, 'create'])->name('create');
+        Route::get('/create/{rekam_medis_id}', 
+            [LabPemeriksaanController::class, 'create']
+        )->name('create.with.rm');
 
-    // DELETE
-    Route::delete('/{id}', [LabPemeriksaanController::class, 'destroy'])->name('destroy');
+        Route::post('/', [LabPemeriksaanController::class, 'store'])->name('store');
 
-    // SHOW — harus paling terakhir!
-    Route::get('/{id}', [LabPemeriksaanController::class, 'show'])->name('show');
-});
+        Route::get('/rekam-medis/{rekam_medis_id}', 
+            [LabPemeriksaanController::class, 'byRekamMedis']
+        )->name('byRekamMedis');
+
+        Route::get('/{id}/edit', [LabPemeriksaanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [LabPemeriksaanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [LabPemeriksaanController::class, 'destroy'])->name('destroy');
+
+        // SHOW harus paling terakhir
+        Route::get('/{id}', [LabPemeriksaanController::class, 'show'])->name('show');
+    });
 
 });
