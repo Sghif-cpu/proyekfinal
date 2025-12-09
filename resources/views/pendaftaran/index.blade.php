@@ -47,11 +47,8 @@
 
                         {{-- NAMA PASIEN --}}
                         <td>{{ $row->pasien->nama ?? '-' }}</td>
-
-                        {{-- NAMA DOKTER --}}
-                        <td>{{ $row->dokter->nama ?? '-' }}</td>
-
-                        {{-- PENJAMIN --}}
+                        <td>{{ $row->dokter->nama_dokter ?? '-' }}</td>
+                        <td>{{ $row->poli->nama_poli ?? '-' }}</td>
                         <td>{{ $row->penjamin->nama_penjamin ?? '-' }}</td>
 
                         {{-- POLI --}}
