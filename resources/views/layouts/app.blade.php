@@ -18,9 +18,9 @@
             transition: .3s;
         }
 
-        /* ================================
-           SIDEBAR SLIDE IN / SLIDE OUT
-        =================================*/
+        /* ==========================================
+           SIDEBAR MODERN + MINI ICON MODE
+        =========================================== */
         .sidebar {
             width: 250px;
             height: 100vh;
@@ -28,43 +28,27 @@
             background: #1f2d3d;
             padding: 15px 0;
             color: white;
-            transition: transform .3s ease;
+            transition: all .3s ease;
             overflow: hidden;
-            transform: translateX(0);
         }
 
-        /* Collapse: slide-out tetapi icon tetap muncul */
+        /* Collapse Mode: mini sidebar */
         .sidebar.collapsed {
-            transform: translateX(-180px);   /* geser keluar */
-        }
-
-        /* Geser kembali ICON supaya tetap terlihat */
-        .sidebar.collapsed a i,
-        .sidebar.collapsed .brand i,
-        .sidebar.collapsed #btn-logout i {
-            transform: translateX(180px);
-            transition: .3s;
-        }
-
-        /* Hide all text elements when collapsed */
-        .sidebar.collapsed a span,
-        .sidebar.collapsed .brand span,
-        .sidebar.collapsed #btn-logout span,
-        .sidebar.collapsed .menu-label {
-            display: none !important;
+            width: 70px;
         }
 
         .sidebar .brand {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            padding: 15px;
-            border-bottom: 1px solid #3c4b5a;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            transition: .2s;
+            padding: 20px 0;
+            gap: 10px;
+            transition: .3s;
+        }
+
+        /* Hide text when collapsed */
+        .sidebar.collapsed .brand span {
+            display: none;
         }
 
         .sidebar a {
@@ -75,7 +59,7 @@
             text-decoration: none;
             transition: .2s;
             font-size: 15px;
-            gap: 12px;
+            gap: 15px;
             white-space: nowrap;
         }
 
@@ -84,22 +68,46 @@
             color: white;
         }
 
+        /* CENTER ICONS WHEN COLLAPSED */
+        .sidebar.collapsed a {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed a span {
+            display: none;
+        }
+
         .sidebar i {
             width: 22px;
+            font-size: 18px;
             text-align: center;
+        }
+
+        /* Menu label */
+        .menu-label {
+            font-size: 11px;
+            color: #d0d4d9;
+            padding-left: 20px;
+            opacity: 0.7;
+            margin-top: 10px;
+            margin-bottom: 3px;
+        }
+
+        .sidebar.collapsed .menu-label {
+            display: none;
         }
 
         /* CONTENT SHIFT */
         .content {
             margin-left: 250px;
             padding: 25px;
-            transition: margin-left .3s ease;
+            transition: .3s ease;
         }
         .content.expanded {
             margin-left: 70px;
         }
 
-        /* TOGGLE BUTTON */
+        /* Toggle Btn */
         #toggle-btn {
             width: 100%;
             text-align: right;
@@ -111,21 +119,23 @@
         #toggle-btn:hover {
             color: white;
         }
+
     </style>
 </head>
 <body>
 
 <div class="sidebar" id="sidebar">
+
     <div id="toggle-btn">
         <i class="fas fa-bars"></i>
     </div>
 
     <div class="brand">
-        <i class="fas fa-hospital"></i>
+        <i class="fas fa-hospital fa-2x"></i>
         <span>SIM RM</span>
     </div>
 
-    <small class="px-3 menu-label">MENU UTAMA</small>
+    <small class="menu-label">MENU UTAMA</small>
 
     <a href="{{ route('dashboard') }}">
         <i class="fas fa-home"></i> <span>Dashboard</span>
@@ -144,7 +154,7 @@
     </a>
 
     <a href="{{ route('lab.index') }}">
-        <i class="fas fa-vials"></i> Lab
+        <i class="fas fa-vials"></i> <span>Lab</span>
     </a>
 
     <a href="{{ route('obat.index') }}">
@@ -155,7 +165,7 @@
         <i class="fas fa-cash-register"></i> <span>Kasir</span>
     </a>
 
-    <small class="px-3 mt-4 menu-label">MASTER DATA</small>
+    <small class="menu-label mt-3">MASTER DATA</small>
 
     <a href="{{ route('dokter.index') }}">
         <i class="fas fa-user-md"></i> <span>Dokter</span>
@@ -173,11 +183,12 @@
         @csrf
     </form>
 
-    <div class="px-3 mt-5">
-        <button id="btn-logout" class="btn btn-danger w-100">
+    <div class="px-3 mt-4">
+        <button id="btn-logout" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2">
             <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
         </button>
     </div>
+
 </div>
 
 <div class="content" id="content">
@@ -217,7 +228,6 @@
     });
 </script>
 
-<!-- Bootstrap JS (bundle includes Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 @stack('scripts')
