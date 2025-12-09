@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Obat;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ObatController extends Controller
 {
@@ -76,5 +77,18 @@ class ObatController extends Controller
         $obat->delete();
 
         return redirect()->route('obat.index')->with('success', 'Data Obat Berhasil Dihapus');
+    }
+
+    // ==========================
+    //     FUNGSI CETAK PDF
+    // ==========================
+    public function cetak()
+    {
+        $obat = Obat::all();
+
+        $pdf = Pdf::loadView('obat.cetak', compact('obat'))
+                    ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('laporan-obat.pdf');
     }
 }
